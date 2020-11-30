@@ -41,7 +41,7 @@ if [[ ${print_help} -eq 1 ]]; then
 	exit 0;
 fi
 
-echo "Fixing hostnames for cluster: ${cluster_name}"
+echo "Attempting to repair hostnames for cluster: ${cluster_name}"
 
 
 for (( i=0; i<${master_node_count}; i++ )); do
@@ -51,6 +51,11 @@ for (( i=0; i<${master_node_count}; i++ )); do
 	ssh -t ${username}@${node_fqdn} "sudo hostnamectl set-hostname ${node_fqdn}"
 done
 
-
+for (( i=0; i<${worker_node_count}; i++ )); do
+        node_fqdn="worker-${i}.${cluster_name}.${base_domain}"
+        host_ip=$(host "${node_fqdn}" | awk '{ print $4 }')
+        echo "Modifying node ${node_fqdn} at ${host_ip}..."
+        ssh -t ${username}@${node_fqdn} "sudo hostnamectl set-hostname ${node_fqdn}"
+done
 
 
