@@ -26,7 +26,7 @@ if [[ ${print_help} -eq 1 ]]; then
 	echo "This script attempts to repair the hostnames of cluster nodes which may have had their hostnames previously changed to something erroneous (such as 'fedora'). The script assembles each node's Fully Qualified Domain Name in the pattern <master | worker>-<index>.<cluster>.<base> An ssh connection is attempted to the host. If the connection is successful, 'sudo hostnamectl set-hostname <fqdn>' is run. Be sure to load in your ssh key for the ssh user before running the script." 
 	echo ""
 	echo "Syntax:"
-        echo "repairiClusterHostnames.sh -c mycluster -b your.company.com -m 3 -w 4 -u "
+        echo "repairiClusterHostnames.sh -c <cluster> -b <base URL> -m <count> -w <count> -u <username>"
 	echo ""
 	echo "options:"
 	echo "-c The cluster name"
