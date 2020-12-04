@@ -71,15 +71,15 @@ while true; do
 			echo "Transient hostname matches dns name" >> ${output_filename} 
                 else
 			echo "Transient hostname does not match DNS name" >> ${output_filename} 
-                        echo "========== Grabbing hosts from nswitch ==========" >> ${output_filename} 
-                        ssh -o LogLevel=QUIET -t core@${vm_fqdn} "grep hosts /etc/nsswitch.conf" >> ${output_filename} 
-                        echo "========== Checking active status of systemd-resolved ==========" >> ${output_filename} 
-                        ssh -o LogLevel=QUIET -t core@${vm_fqdn} "systemctl is-active systemd-resolved" >> ${output_filename} 
-                        echo "========== Checking enabled status of systemd-resolved ==========" >> ${output_filename}
-		       	ssh -o LogLevel=QUIET -t core@${vm_fqdn} "systemctl is-enabled systemd-resolved" >> ${output_filename}	
-                        echo "========== Checking rpm-ostree status ==========" >> ${output_filename} 
-                        ssh -o LogLevel=QUIET -t core@${vm_fqdn} "rpm-ostree status" >> ${output_filename} 
                 fi
+		echo "========== Grabbing hosts from nswitch ==========" >> ${output_filename}
+                ssh -o LogLevel=QUIET -t core@${vm_fqdn} "grep hosts /etc/nsswitch.conf" >> ${output_filename}
+                echo "========== Checking active status of systemd-resolved ==========" >> ${output_filename}
+                ssh -o LogLevel=QUIET -t core@${vm_fqdn} "systemctl is-active systemd-resolved" >> ${output_filename}
+                echo "========== Checking enabled status of systemd-resolved ==========" >> ${output_filename}
+                ssh -o LogLevel=QUIET -t core@${vm_fqdn} "systemctl is-enabled systemd-resolved" >> ${output_filename}
+                echo "========== Checking rpm-ostree status ==========" >> ${output_filename}
+                ssh -o LogLevel=QUIET -t core@${vm_fqdn} "rpm-ostree status" >> ${output_filename}
 		cat ${output_filename}
                 break
         else
