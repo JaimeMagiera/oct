@@ -9,7 +9,7 @@ show_help() {
         echo ""	
 	echo "Test Hostname"
 	echo ""
-	echo "This script attempts to ssh into a Fedora CoreOS node to determine if the Transient Hostname matches the Fully Qualified Domain Name for the purposes of debugging issue OKD issue #394 https://github.com/openshift/okd/issues/394. The script outputs the results to console and to a file of the name format 'test-hostname-report-m-d-y-HMS.log". Be sure to load in your ssh key for the ssh user before running the script. 
+	echo "This script attempts to ssh into a Fedora CoreOS node to determine if the Transient Hostname matches the Fully Qualified Domain Name for the purposes of debugging OKD issue #394 https://github.com/openshift/okd/issues/394. The script outputs the results to console and to a file of the name format 'test-hostname-report-m-d-y-HMS.log". Be sure to load in your ssh key for the ssh user before running the script. 
 	echo ""
 	echo "Syntax:"
         echo "test-hostname.sh --fqdn <fqdn>"
