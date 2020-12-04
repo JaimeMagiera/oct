@@ -1,7 +1,6 @@
 #!/bin/bash
 
 die() {
-    #printf '%s\n' "$1" >&2
     echo "$1"
     exit 1
 }
