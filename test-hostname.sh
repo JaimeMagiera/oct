@@ -55,10 +55,6 @@ while :; do
     shift
 done
 
-
-
-
-
 while true; do
 	echo "Testing..."
         if transient_name=$(ssh -o StrictHostKeyChecking=accept-new -t core@${vm_fqdn} "sudo hostnamectl --transient"); then
