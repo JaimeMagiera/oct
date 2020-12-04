@@ -5,6 +5,25 @@ die() {
     exit 1
 }
 
+show_help() {
+        echo ""	
+	echo "Test Hostname"
+	echo ""
+	echo "This script attempts to ssh into a Fedora CoreOS node to determine if the Transient Hostname matches the Fully Qualified Domain Name for the purposes of debugging issue OKD issue #394 https://github.com/openshift/okd/issues/394. The script outputs the results to console and to a file of the name format 'test-hostname-report-m-d-y-HMS.log" 
+	echo ""
+	echo "Syntax:"
+        echo "test-hostname.sh --fqdn <fqdn>"
+	echo ""
+	echo "options:"
+	echo "-fqdn The Fully Qualified Domain Name of the node you wish to test"
+	echo ""
+	echo "Example:"
+        echo "./test-hostname.sh --fqdn mynode.company.com"	
+	echo ""
+	exit 0;
+}
+
+
 while :; do
     case $1 in
         -h|-\?|--help)
@@ -37,11 +56,14 @@ while :; do
 done
 
 
+
+
+
 while true; do
 	echo "Testing..."
         if transient_name=$(ssh -o StrictHostKeyChecking=accept-new -t core@${vm_fqdn} "sudo hostnamectl --transient"); then
                 current_timstamp=$(date +"%m-%d-%y-%H%M%S")
-		output_filename="test_hostname_report_${current_timstamp}.txt"
+		output_filename="test_hostname_report_${current_timstamp}.log"
 		echo "Timestamp: ${current_timstamp}" > ${output_filename} 
 		echo "FQDN: ${vm_fqdn}" >> ${output_filename} 
 		echo "Transient Name: ${transient_name}" >> ${output_filename} 
