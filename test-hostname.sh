@@ -50,13 +50,13 @@ while true; do
                 else
 			echo "Transient hostname does not match DNS name" >> ${output_filename} 
                         echo "========== Grabbing hosts from nswitch ==========" >> ${output_filename} 
-                        ssh -o LogLevel=QUIET -o StrictHostKeyChecking=accept-new -t core@${vm_fqdn} "grep hosts /etc/nsswitch.conf" >> ${output_filename} 
+                        ssh -o LogLevel=QUIET -t core@${vm_fqdn} "grep hosts /etc/nsswitch.conf" >> ${output_filename} 
                         echo "========== Checking active status of systemd-resolved ==========" >> ${output_filename} 
-                        ssh -o LogLevel=QUIET -o StrictHostKeyChecking=accept-new -t core@${vm_fqdn} "systemctl is-active systemd-resolved" >> ${output_filename} 
+                        ssh -o LogLevel=QUIET -t core@${vm_fqdn} "systemctl is-active systemd-resolved" >> ${output_filename} 
                         echo "========== Checking enabled status of systemd-resolved ==========" >> ${output_filename}
-		       	ssh -o LogLevel=QUIET -o StrictHostKeyChecking=accept-new -t core@${vm_fqdn} "systemctl is-enabled systemd-resolved" >> ${output_filename}	
+		       	ssh -o LogLevel=QUIET -t core@${vm_fqdn} "systemctl is-enabled systemd-resolved" >> ${output_filename}	
                         echo "========== Checking rpm-ostree status ==========" >> ${output_filename} 
-                        ssh -o LogLevel=QUIET -o StrictHostKeyChecking=accept-new -t core@${vm_fqdn} "rpm-ostree status" >> ${output_filename} 
+                        ssh -o LogLevel=QUIET -t core@${vm_fqdn} "rpm-ostree status" >> ${output_filename} 
                 fi
 		cat ${output_filename}
                 break
