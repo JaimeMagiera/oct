@@ -11,12 +11,12 @@ while :; do
             show_help
             exit
             ;;
-        --template)
+        --ova)
             if [ "$2" ]; then
-                template_name=$2
+                ova_name=$2
                 shift
             else
-                die 'ERROR: "--template" requires a non-empty option argument.'
+                die 'ERROR: "--ova" requires a non-empty option argument.'
             fi
             ;;
 	--ignition)
@@ -111,7 +111,7 @@ while :; do
     shift
 done
 
-echo "Template: ${template_name}"
+echo "Template: ${ova_name}"
 echo "VM Name: ${vm_name}"
 echo "CPU: ${vm_cpu}"
 echo "Memory: ${vm_memory}"
@@ -121,7 +121,7 @@ echo "Network: ${cluster_network}"
 echo "Folder: ${cluster_folder}"
 echo "Datastore: ${cluster_datastore}"
 
-govc vm.clone -vm "${template_name}" \
+govc vm.clone -vm "${ova_name}" \
 		-ds "${cluster_datastore}" \
 		-folder "${cluster_folder}" \
 		-on="false" \
