@@ -1,5 +1,11 @@
 #!/bin/bash
 
+die() {
+    #printf '%s\n' "$1" >&2
+    echo "$1"
+    exit 1
+}
+
 while :; do
     case $1 in
         -h|-\?|--help)
@@ -87,7 +93,7 @@ while :; do
             fi
             ;;  
         --boot)
-            boot_vm=$1
+            boot_vm=1
             ;; 
         -v|--verbose)
             verbose=$((verbose + 1))  
@@ -131,6 +137,6 @@ govc vm.change -vm "${vm_name}" \
 govc vm.network.change -vm ${vm_name} -net "${cluster_network}" -net.address ${vm_mac} ethernet-0
 govc vm.info -e "${vm_name}"
 
-if [ "${boot_vm}" == "yes" ]; then
+if [ "${boot_vm}" -eq 1 ]; then
 	govc vm.power -on "${vm_name}"
 fi
