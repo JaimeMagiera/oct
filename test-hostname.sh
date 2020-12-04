@@ -35,7 +35,7 @@ while :; do
                 vm_fqdn=$2
                 shift
             else
-                die 'ERROR: "--template" requires a non-empty option argument.'
+                die 'ERROR: "--fqdn" requires a non-empty option argument.'
             fi
             ;;
         -v|--verbose)
