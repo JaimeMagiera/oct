@@ -158,6 +158,6 @@ fi
 
 govc vm.info -e "${vm_name}"
 
-if [ "${boot_vm}" -eq 1 ]; then
+if [[ ! -z "${boot_vm}" ]]; then
 	govc vm.power -on "${vm_name}"
 fi
