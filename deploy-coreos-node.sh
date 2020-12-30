@@ -148,8 +148,14 @@ govc vm.change -vm "${vm_name}" \
 	-m="${vm_memory}" \
 
 
-govc vm.change -vm "${vm_name}" -e "guestinfo.afterburn.initrd.network-kargs=${ipcfg}"
-#govc vm.network.change -vm ${vm_name} -net "${cluster_network}" -net.address ${vm_mac} ethernet-0
+if [[ ! -z "${ipcfg}" ]]; then
+	govc vm.change -vm "${vm_name}" -e "guestinfo.afterburn.initrd.network-kargs=${ipcfg}"
+fi
+	
+if [[ ! -z "${vm_mac}" ]]; then
+	govc vm.network.change -vm ${vm_name} -net "${cluster_network}" -net.address ${vm_mac} ethernet-0
+fi
+
 govc vm.info -e "${vm_name}"
 
 if [ "${boot_vm}" -eq 1 ]; then
