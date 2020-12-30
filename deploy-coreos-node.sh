@@ -19,6 +19,14 @@ while :; do
                 die 'ERROR: "--ova" requires a non-empty option argument.'
             fi
             ;;
+	 --library)
+            if [ "$2" ]; then
+                library=$2
+                shift
+            else
+                die 'ERROR: "--library" requires a non-empty option argument.'
+            fi
+            ;;    
 	--ignition)
             if [ "$2" ]; then
                 ignition_file_path=$2
@@ -75,6 +83,14 @@ while :; do
                 die 'ERROR: "--mac" requires a non-empty option argument.'
             fi
             ;;
+        --ipcfg)
+            if [ "$2" ]; then
+                ipcfg=$2
+                shift
+            else
+                die 'ERROR: "--ipcfg" requires a non-empty option argument.'
+            fi
+            ;;
 	--folder)
             if [ "$2" ]; then
                 cluster_folder=$2
@@ -112,28 +128,28 @@ while :; do
 done
 
 echo "Template: ${ova_name}"
+echo "Library: ${library}"
 echo "VM Name: ${vm_name}"
 echo "CPU: ${vm_cpu}"
 echo "Memory: ${vm_memory}"
 echo "Disk: ${vm_disk}"
 echo "MAC Address: ${vm_mac}"
+echo "Afterburn Network Config ${ipcfg}"
 echo "Network: ${cluster_network}"
 echo "Folder: ${cluster_folder}"
 echo "Datastore: ${cluster_datastore}"
 
-govc vm.clone -vm "${ova_name}" \
-		-ds "${cluster_datastore}" \
-		-folder "${cluster_folder}" \
-		-on="false" \
-		-c="${vm_cpu}" -m="${vm_memory}" \
-		-net="${cluster_network}" \
-		$vm_name
+govc library.deploy --folder "${cluster_folder}" "${library}/${ova_name}" "${vm_name}"
 
 govc vm.change -vm "${vm_name}" \
 	-e guestinfo.ignition.config.data="$(cat ${ignition_file_path} | base64 -w0)" \
 	-e guestinfo.ignition.config.data.encoding="base64" \
+	-c="${vm_cpu}" \
+	-m="${vm_memory}" \
 
-govc vm.network.change -vm ${vm_name} -net "${cluster_network}" -net.address ${vm_mac} ethernet-0
+
+govc vm.change -vm "${vm_name}" -e "guestinfo.afterburn.initrd.network-kargs=${ipcfg}"
+#govc vm.network.change -vm ${vm_name} -net "${cluster_network}" -net.address ${vm_mac} ethernet-0
 govc vm.info -e "${vm_name}"
 
 if [ "${boot_vm}" -eq 1 ]; then
