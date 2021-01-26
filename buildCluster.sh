@@ -24,13 +24,13 @@ while getopts ":t:c:d:f:n:i:m:w:" opt; do
 done
 
 bootstrap_cpu=4
-bootstrap_memory=8192
+bootstrap_memory=16000
 bootstrap_disk=120
 master_cpu=4
 master_memory=16000
 master_disk=120
 worker_cpu=4
-worker_memory=8192
+worker_memory=16000
 worker_disk=120
 
 
@@ -42,7 +42,7 @@ echo "Network: ${network_name}"
 echo "Install Folder: ${install_folder}"
 echo "Creating a bootstrap node with ${bootstrap_cpu} cpus and ${bootstrap_memory} MB of memory"
 echo "Creating ${master_node_count} master nodes with ${master_cpu} cpus and ${master_memory} MB of memory"
-echo "Creating ${worker_node_count} master nodes with ${worker_cpu} cpus and ${worker_memory} MB of memory"
+echo "Creating ${worker_node_count} worker nodes with ${worker_cpu} cpus and ${worker_memory} MB of memory"
 
 # Create the bootstrap node
 
