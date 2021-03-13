@@ -15,5 +15,5 @@ sed -i "s/\"timeouts\":{}/\"timeouts\":{\"httpResponseHeaders\":50,\"httpTotal\"
 
 sudo /usr/bin/cp bootstrap.ign /var/www/html/bootstrap.ign
 sudo /usr/bin/chown apache:apache /var/www/html/bootstrap.ign
-sudo /usr/bin/restorecon -Rv /var/www/html/
+sudo /usr/sbin/restorecon -Rv /var/www/html/
 
