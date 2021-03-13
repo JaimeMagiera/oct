@@ -110,8 +110,9 @@ install_cluster_tools(){
 	fi
 
 	if [ -z ${release_version} ]; then
-        	release_info=$(oc adm release info registry.svc.ci.openshift.org/origin/release:4.7)
-        	release_version=$(echo ${release_info} | grep Name | awk '{print $2}')
+        	release_info=$(oc adm release info registry.ci.openshift.org/origin/release:4.7)
+        	release_version=$(echo "${release_info}" | grep Name | awk '{print $2}')
+		pull_url=$(echo "${release_info}" | grep "Pull From:" | awk '{print $3}')	
 	fi
 
 	installer_file_name="openshift-install-linux-${release_version}.tar.gz"
@@ -121,7 +122,9 @@ install_cluster_tools(){
 		mkdir bin
 	fi
 
-	oc adm release extract --to bin --tools registry.ci.openshift.org/origin/release:${release_version}
+
+
+	oc adm release extract --to bin --tools ${pull_url} 
 	tar xvf bin/${installer_file_name} -C bin
 	tar xvf bin/${client_file_name} -C bin
 	rm bin/${installer_file_name}
