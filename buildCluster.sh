@@ -26,7 +26,9 @@ while :; do
             ;;
          --build)
             build=1
-            ;;	   
+            ;;
+          --destroy)
+            destroy=1	    
          --clean)
             clean=1
             ;;	    
@@ -204,6 +206,28 @@ build_cluster(){
 	done
 }	
 
+destroy() {
+	echo "Destroying cluster: ${cluster_name}"
+
+	# Destroy the master nodes
+
+	for (( i=0; i<${master_node_count}; i++ )); do
+        	vm="master-${i}.${cluster_name}"
+		govc vm.destroy $vm
+	done
+
+	# Destroy the worker nodes
+
+	for (( i=0; i<${worker_node_count}; i++ )); do
+		vm="worker-${i}.${cluster_name}"
+		govc vm.destroy $vm
+	done
+
+	# Destroy the bootstrap node
+	vm="bootstrap.${cluster_name}"
+	govc vm.destroy $vm
+}	
+
 clean() {
 	rm -rf master.ign worker.ign metadata.json .openshift_install* auth/ bootstrap.ign
 }	
@@ -218,6 +242,10 @@ fi
 
 if [ ! -z ${build} ]; then
         build_cluster
+fi
+
+if [ ! -z ${destroy} ]; then
+        destroy
 fi
 
 if [ ! -z ${clean} ]; then
