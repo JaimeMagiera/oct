@@ -26,6 +26,9 @@ while :; do
             ;;
          --build)
             build=1
+            ;;	   
+         --clean)
+            clean=1
             ;;	    
          --template-name)
             if [ "$2" ]; then
@@ -201,6 +204,10 @@ build_cluster(){
 	done
 }	
 
+clean() {
+	rm -rf master.ign worker.ign metadata.json .openshift_install* auth/ bootstrap.ign
+}	
+
 if [ ! -z ${install_tools} ]; then
 	install_cluster_tools	
 fi	
@@ -212,3 +219,8 @@ fi
 if [ ! -z ${build} ]; then
         build_cluster
 fi
+
+if [ ! -z ${clean} ]; then
+        clean
+fi
+
