@@ -28,9 +28,18 @@ while :; do
             build=1
             ;;
           --destroy)
-            destroy=1	    
+            destroy=1
+	    ;;		    
          --clean)
             clean=1
+            ;;
+         --power)
+            if [ "$2" ]; then
+                power_action=$2
+                shift
+            else
+                die 'ERROR: "--power" requires a non-empty option argument.'
+            fi
             ;;	    
          --template-name)
             if [ "$2" ]; then
@@ -232,6 +241,29 @@ clean() {
 	rm -rf master.ign worker.ign metadata.json .openshift_install* auth/ bootstrap.ign
 }	
 
+manage_power() {
+	
+	echo "Turning cluster ${power_action}..."
+
+	vm="bootstrap.${cluster_name}"
+	govc vm.power -${power_action} "${vm}"
+
+	# Manage power for the master nodes
+
+	for (( i=0; i<${master_node_count}; i++ )); do
+        	vm="master-${i}.${cluster_name}"
+		govc vm.power -${power_action} "${vm}"
+	done
+
+	# Manage power for the worker nodes
+
+	for (( i=0; i<${worker_node_count}; i++ )); do
+		vm="worker-${i}.${cluster_name}"
+		govc vm.power -${power_action} "${vm}"
+	done
+
+}
+
 if [ ! -z ${install_tools} ]; then
 	install_cluster_tools	
 fi	
@@ -246,6 +278,10 @@ fi
 
 if [ ! -z ${destroy} ]; then
         destroy
+fi
+
+if [ ! -z ${power_action} ]; then
+        manage_power
 fi
 
 if [ ! -z ${clean} ]; then
