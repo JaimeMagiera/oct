@@ -127,7 +127,7 @@ while :; do
     shift
 done
 
-#if [ ${verbose} > 0 ]; then
+if [ ${verbose} > 0 ]; then
 	echo "Template: ${ova_name}"
 	echo "Library: ${library}"
 	echo "VM Name: ${vm_name}"
@@ -140,7 +140,7 @@ done
 	echo "Folder: ${cluster_folder}"
 	echo "Datastore: ${cluster_datastore}"
 	echo "ignition_file_path: ${ignition_file_path}"
-	#fi 
+fi 
 
 govc library.deploy --folder "${cluster_folder}" "${library}/${ova_name}" "${vm_name}"
 govc vm.change -vm "${vm_name}" \
