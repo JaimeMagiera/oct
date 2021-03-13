@@ -127,26 +127,27 @@ while :; do
     shift
 done
 
-echo "Template: ${ova_name}"
-echo "Library: ${library}"
-echo "VM Name: ${vm_name}"
-echo "CPU: ${vm_cpu}"
-echo "Memory: ${vm_memory}"
-echo "Disk: ${vm_disk}"
-echo "MAC Address: ${vm_mac}"
-echo "Afterburn Network Config ${ipcfg}"
-echo "Network: ${cluster_network}"
-echo "Folder: ${cluster_folder}"
-echo "Datastore: ${cluster_datastore}"
+#if [ ${verbose} > 0 ]; then
+	echo "Template: ${ova_name}"
+	echo "Library: ${library}"
+	echo "VM Name: ${vm_name}"
+	echo "CPU: ${vm_cpu}"
+	echo "Memory: ${vm_memory}"
+	echo "Disk: ${vm_disk}"
+	echo "MAC Address: ${vm_mac}"
+	echo "Afterburn Network Config ${ipcfg}"
+	echo "Network: ${cluster_network}"
+	echo "Folder: ${cluster_folder}"
+	echo "Datastore: ${cluster_datastore}"
+	echo "ignition_file_path: ${ignition_file_path}"
+	#fi 
 
 govc library.deploy --folder "${cluster_folder}" "${library}/${ova_name}" "${vm_name}"
-
 govc vm.change -vm "${vm_name}" \
-	-e guestinfo.ignition.config.data="$(cat ${ignition_file_path} | base64 -w0)" \
-	-e guestinfo.ignition.config.data.encoding="base64" \
 	-c="${vm_cpu}" \
-	-m="${vm_memory}" \
-
+	-m="${vm_memory}" 
+govc vm.change -vm "${vm_name}" -e guestinfo.ignition.config.data="$(cat ${ignition_file_path} | base64 -w0)" -e guestinfo.ignition.config.data.encoding="base64"
+govc vm.disk.change -vm "${vm_name}" -disk.label "Hard disk 1" -size ${vm_disk}G
 
 if [[ ! -z "${ipcfg}" ]]; then
 	govc vm.change -vm "${vm_name}" -e "guestinfo.afterburn.initrd.network-kargs=${ipcfg}"
@@ -155,8 +156,6 @@ fi
 if [[ ! -z "${vm_mac}" ]]; then
 	govc vm.network.change -vm ${vm_name} -net "${cluster_network}" -net.address ${vm_mac} ethernet-0
 fi
-
-govc vm.info -e "${vm_name}"
 
 if [[ ! -z "${boot_vm}" ]]; then
 	govc vm.power -on "${vm_name}"
