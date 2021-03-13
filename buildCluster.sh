@@ -15,6 +15,9 @@ while :; do
         --auto)
             auto_select=1
             ;;
+	--auto-secret)
+            auto_secret=1
+            ;;    
 	--install-tools)
             install_tools=1
             ;;
@@ -132,8 +135,12 @@ install_cluster_tools(){
 }
 
 launch_prerun() {
-	echo "Please enter your pullSecret"
-	read pullSecret
+	if [ -z ${auto_secret} ]; then
+		echo "Please enter your pullSecret"
+		read pullSecret
+	else
+		pullSecret='{"auths":{"fake":{"auth": "bar"}}}'
+	fi
 	cp install-config.yaml.template install-config.yaml
 	echo "pullSecret: '${pullSecret}'" >> install-config.yaml
 	bin/openshift-install create manifests --dir=$(pwd)
@@ -145,9 +152,10 @@ launch_prerun() {
 	# Change timeouts for Worker
 	sed -i "s/\"timeouts\":{}/\"timeouts\":{\"httpResponseHeaders\":50,\"httpTotal\":600}/g" worker.ign
 
+	echo "Copying bootstrap.ign to /var/www/html/..."
 	sudo /usr/bin/cp bootstrap.ign /var/www/html/bootstrap.ign
 	sudo /usr/bin/chown apache:apache /var/www/html/bootstrap.ign
-	sudo /usr/sbin/restorecon -Rv /var/www/html/
+	sudo /usr/sbin/restorecon -Rv /var/www/html
 }
 
 build_cluster(){
