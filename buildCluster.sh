@@ -174,14 +174,14 @@ build_cluster(){
 	echo "Creating a bootstrap node with ${bootstrap_cpu} cpus and ${bootstrap_memory} MB of memory"
 
 	vm="bootstrap.${cluster_name}"
-	/home/jaimelm1/projects/oct/deploy-coreos-node.sh -v --ova "$template_name" --name "${vm}" --cpu "${bootstrap_cpu}"  --memory "${bootstrap_memory}" --disk "${bootstrap_disk}"  --folder "${vm_folder}" --library "Linux ISOs" --ignition "${installation_folder}/append-bootstrap.ign"
+	deploy-coreos-node.sh -v --ova "$template_name" --name "${vm}" --cpu "${bootstrap_cpu}"  --memory "${bootstrap_memory}" --disk "${bootstrap_disk}"  --folder "${vm_folder}" --library "Linux ISOs" --ignition "${installation_folder}/append-bootstrap.ign"
 
 	# Create the master nodes
 	echo "Creating ${master_node_count} master nodes with ${master_cpu} cpus and ${master_memory} MB of memory"
 
 	for (( i=0; i<${master_node_count}; i++ )); do
         	vm="master-${i}.${cluster_name}"
-        	/home/jaimelm1/projects/oct/deploy-coreos-node.sh -v --ova "$template_name" --name "${vm}" --cpu "${master_cpu}"  --memory "${master_memory}" --disk "${master_disk}"  --folder "${vm_folder}" --library "Linux ISOs" --ignition "${installation_folder}/master.ign"
+        	deploy-coreos-node.sh -v --ova "$template_name" --name "${vm}" --cpu "${master_cpu}"  --memory "${master_memory}" --disk "${master_disk}"  --folder "${vm_folder}" --library "Linux ISOs" --ignition "${installation_folder}/master.ign"
 	done
 
 	# Create the worker nodes
@@ -189,7 +189,7 @@ build_cluster(){
 
 	for (( i=0; i<${worker_node_count}; i++ )); do
         	vm="worker-${i}.${cluster_name}"
-        	/home/jaimelm1/projects/oct/deploy-coreos-node.sh --ova "$template_name" --name "${vm}" --cpu "${worker_cpu}"  --memory "${worker_memory}" --disk "${worker_disk}"  --folder "${vm_folder}" --library "Linux ISOs" --ignition "${installation_folder}/worker.ign"
+        	deploy-coreos-node.sh --ova "$template_name" --name "${vm}" --cpu "${worker_cpu}"  --memory "${worker_memory}" --disk "${worker_disk}"  --folder "${vm_folder}" --library "Linux ISOs" --ignition "${installation_folder}/worker.ign"
 	done
 }	
 
