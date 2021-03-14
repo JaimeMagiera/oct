@@ -1,142 +1,180 @@
 #!/bin/bash
 
+OC_URL="https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz"
+GOVC_URL="https://github.com/vmware/govmomi/releases/download/v0.24.0/govc_linux_amd64.gz"
 
 die() {
-    echo "$1"
-    exit 1
+	echo "$1"
+	exit 1
 }
 
 while :; do
-    case $1 in
-        -h|-\?|--help)
-            show_help
-            exit
-            ;;
-        --auto)
-            auto_select=1
-            ;;
-	--auto-secret)
-            auto_secret=1
-            ;;    
-	--install-tools)
-            install_tools=1
-            ;;
-	 --prerun)
-            prerun=1
-            ;;
-         --build)
-            build=1
-            ;;
-          --destroy)
-            destroy=1
-	    ;;		    
-         --clean)
-            clean=1
-            ;;
-         --cluster-power)
-            if [ "$2" ]; then
-                cluster_power_action=$2
-                shift
-            else
-                die 'ERROR: "--power" requires a non-empty option argument.'
-            fi
-            ;;
-	 --library)
-            if [ "$2" ]; then
-                library=$2
-                shift
-            else
-                die 'ERROR: "--library" requires a non-empty option argument.'
-            fi
-            ;;	    
-         --template-name)
-            if [ "$2" ]; then
-                template_name=$2
-                shift
-            else
-                die 'ERROR: "--template-name" requires a non-empty option argument.'
-            fi
-            ;;	    
-         --cluster-name)
-            if [ "$2" ]; then
-                cluster_name=$2
-                shift
-            else
-                die 'ERROR: "--cluster-name" requires a non-empty option argument.'
-            fi
-            ;;
-         --cluster-folder)
-            if [ "$2" ]; then
-                cluster_folder=$2
-                shift
-            else
-                die 'ERROR: "--vm-folder" requires a non-empty option argument.'
-            fi
-            ;;
-         --network-name)
-            if [ "$2" ]; then
-                network_name=$2
-                shift
-            else
-                die 'ERROR: "--network-name" requires a non-empty option argument.'
-            fi
-            ;;	    
-         --installation-folder)
-            if [ "$2" ]; then
-                installation_folder=$2
-                shift
-            else
-                die 'ERROR: "--installation_folder" requires a non-empty option argument.'
-            fi
-            ;;
-         --master-node-count)
-            if [ "$2" ]; then
-		master_node_count=$2
-                shift
-            else
-                die 'ERROR: "--master-node-count" requires a non-empty option argument.'
-            fi
-            ;;
-         --worker-node-count)
-            if [ "$2" ]; then
-                worker_node_count=$2
-                shift
-            else
-                die 'ERROR: "--worker-node-count" requires a non-empty option argument.'
-            fi
-            ;;
+	case $1 in
+		-h|-\?|--help)
+			show_help
+			exit
+			;;
+		--auto)
+			auto_select=1
+			;;
+		--auto-secret)
+			auto_secret=1
+			;;    
+		--install-tools)
+			install_tools=1
+			;;
+		--prerun)
+			prerun=1
+			;;
+		--build)
+			build=1
+			;;
+		--destroy)
+			destroy=1
+			;;		    
+		--clean)
+			clean=1
+			;;
+		--cluster-power)
+			if [ "$2" ]; then
+				cluster_power_action=$2
+				shift
+			else
+				die 'ERROR: "--power" requires a non-empty option argument.'
+			fi
+			;;
+		--library)
+			if [ "$2" ]; then
+				library=$2
+				shift
+			else
+				die 'ERROR: "--library" requires a non-empty option argument.'
+			fi
+			;;	    
+		--template-name)
+			if [ "$2" ]; then
+				template_name=$2
+				shift
+			else
+				die 'ERROR: "--template-name" requires a non-empty option argument.'
+			fi
+			;;	    
+		--cluster-name)
+			if [ "$2" ]; then
+				cluster_name=$2
+				shift
+			else
+				die 'ERROR: "--cluster-name" requires a non-empty option argument.'
+			fi
+			;;
+		--cluster-folder)
+			if [ "$2" ]; then
+				cluster_folder=$2
+				shift
+			else
+				die 'ERROR: "--vm-folder" requires a non-empty option argument.'
+			fi
+			;;
+		--network-name)
+			if [ "$2" ]; then
+				network_name=$2
+				shift
+			else
+				die 'ERROR: "--network-name" requires a non-empty option argument.'
+			fi
+			;;	    
+		--installation-folder)
+			if [ "$2" ]; then
+				installation_folder=$2
+				shift
+			else
+				die 'ERROR: "--installation_folder" requires a non-empty option argument.'
+			fi
+			;;
+		--master-node-count)
+			if [ "$2" ]; then
+				master_node_count=$2
+				shift
+			else
+				die 'ERROR: "--master-node-count" requires a non-empty option argument.'
+			fi
+			;;
+		--worker-node-count)
+			if [ "$2" ]; then
+				worker_node_count=$2
+				shift
+			else
+				die 'ERROR: "--worker-node-count" requires a non-empty option argument.'
+			fi
+			;;
 
-    -v|--verbose)
-            verbose=$((verbose + 1))
-            ;;
-        --)
-            shift
-            break
-            ;;
-        -?*)
-            printf 'WARN: Unknown option (ignored): %s\n' "$1" >&2
-            ;;
-        *)
-            break
-    esac
+		-v|--verbose)
+			verbose=$((verbose + 1))
+			;;
+		--)
+			shift
+			break
+			;;
+		-?*)
+			printf 'WARN: Unknown option (ignored): %s\n' "$1" >&2
+			;;
+		*)
+			break
+	esac
 
-    shift
+	shift
 done
+
+check_oc() {
+	
+	if ! command -v oc &> /dev/null
+        then
+                while true; do
+                        read -p "The oc command could not be found. Would you like to download it? " yn
+                        case $yn in
+                                [Yy]* )
+                                        install_oc;break;;
+                                [Nn]* ) exit;;
+                                * ) echo "Please answer yes or no.";;
+                        esac
+                done
+        fi
+
+}	
+
+install_oc() {
+	echo "This script will attempt to download the most recent stable version to your working directory."
+	curl -L ${OC_URL} | gunzip > oc
+	chmod +x oc
+}	
+
+check_govc() {
+
+	if ! command -v govc &> /dev/null
+	then
+		while true; do
+			read -p "The govc command could not be found. Would you like to download it? " yn
+			case $yn in
+				[Yy]* ) 
+					install_govc;break;;
+				[Nn]* ) exit;;
+				* ) echo "Please answer yes or no.";;
+			esac
+		done
+	fi
+}
+
+install_govc() {
+	echo "This script will attempt to download the most recent stable version to your working directory."
+	curl -L ${GOVC_URL} | gunzip > govc 
+	chmod +x govc
+}	
 
 install_cluster_tools(){
 
-	if ! command -v oc &> /dev/null
-	then
-        	echo "The oc command could not be found. This script will attempt to download the most recent stable version of the OpenShift client, which can be used to install all minor version of the software."
-        	curl -O "https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz"
-        	binary_path="$HOME/bin"
-        	tar xvf oc.tar.gz -C ${binary_path}
-        	rm oc.tar.gz
-	fi
-
 	if [ -z ${release_version} ]; then
-        	release_info=$(oc adm release info registry.ci.openshift.org/origin/release:4.7)
-        	release_version=$(echo "${release_info}" | grep Name | awk '{print $2}')
+		release_info=$(oc adm release info registry.ci.openshift.org/origin/release:4.7)
+		release_version=$(echo "${release_info}" | grep Name | awk '{print $2}')
 		pull_url=$(echo "${release_info}" | grep "Pull From:" | awk '{print $3}')	
 	fi
 
@@ -191,7 +229,7 @@ deploy_node() {
 	if [[ ! -z "${ipcfg}" ]]; then
 		govc vm.change -vm "${vm_name}" -e "guestinfo.afterburn.initrd.network-kargs=${ipcfg}"
 	fi
-	
+
 	if [[ ! -z "${vm_mac}" ]]; then
 		govc vm.network.change -vm ${vm_name} -net "${cluster_network}" -net.address ${vm_mac} ethernet-0
 	fi
@@ -200,11 +238,9 @@ deploy_node() {
 		govc vm.power -on "${vm_name}"
 	fi
 }
-	
-
 
 build_cluster(){
-	
+
 	bootstrap_cpu=4
 	bootstrap_memory=16384
 	bootstrap_disk=120
@@ -230,30 +266,30 @@ build_cluster(){
 	vm_disk="${bootstrap_disk}"
 	vm_name="bootstrap.${cluster_name}"
 	ignition_file_path="${installation_folder}/append-bootstrap.ign"
-	
+
 	deploy_node
 
 	# Create the master nodes
 	echo "Creating ${master_node_count} master nodes with ${master_cpu} cpus and ${master_memory} MB of memory"
 	vm_cpu="${master_cpu}"
-        vm_memory="${master_memory}"
-        vm_disk="${master_disk}"
-        ignition_file_path="${installation_folder}/master.ign"
+	vm_memory="${master_memory}"
+	vm_disk="${master_disk}"
+	ignition_file_path="${installation_folder}/master.ign"
 
 	for (( i=0; i<${master_node_count}; i++ )); do
-      		vm_name="master-${i}.${cluster_name}"
+		vm_name="master-${i}.${cluster_name}"
 		deploy_node
 	done
 
 	# Create the worker nodes
 	echo "Creating ${worker_node_count} worker nodes with ${worker_cpu} cpus and ${worker_memory} MB of memory"
 	vm_cpu="${worker_cpu}"
-        vm_memory="${worker_memory}"
-        vm_disk="${worker_disk}"
-        ignition_file_path="${installation_folder}/worker.ign"
+	vm_memory="${worker_memory}"
+	vm_disk="${worker_disk}"
+	ignition_file_path="${installation_folder}/worker.ign"
 
 	for (( i=0; i<${worker_node_count}; i++ )); do
-        	vm_name="worker-${i}.${cluster_name}"
+		vm_name="worker-${i}.${cluster_name}"
 		deploy_node
 	done
 }	
@@ -268,7 +304,7 @@ destroy() {
 		# Destroy the master nodes
 
 		for (( i=0; i<${master_node_count}; i++ )); do
-        		vm="master-${i}.${cluster_name}"
+			vm="master-${i}.${cluster_name}"
 			govc vm.destroy $vm
 		done
 
@@ -292,7 +328,7 @@ clean() {
 }	
 
 manage_cluster_power() {
-	
+
 	echo "Turning cluster ${power_action}..."
 
 	vm="bootstrap.${cluster_name}"
@@ -301,7 +337,7 @@ manage_cluster_power() {
 	# Manage power for the master nodes
 
 	for (( i=0; i<${master_node_count}; i++ )); do
-        	vm="master-${i}.${cluster_name}"
+		vm="master-${i}.${cluster_name}"
 		govc vm.power -${cluster_power_action} "${vm}"
 	done
 
@@ -314,27 +350,30 @@ manage_cluster_power() {
 
 }
 
+check_oc
+check_govc
+
 if [ ! -z ${install_tools} ]; then
 	install_cluster_tools	
 fi	
 
 if [ ! -z ${prerun} ]; then
-        launch_prerun
+	launch_prerun
 fi
 
 if [ ! -z ${build} ]; then
-        build_cluster
+	build_cluster
 fi
 
 if [ ! -z ${destroy} ]; then
-        destroy
+	destroy
 fi
 
 if [ ! -z ${cluster_power_action} ]; then
-        manage_cluster_power
+	manage_cluster_power
 fi
 
 if [ ! -z ${clean} ]; then
-        clean
+	clean
 fi
 
