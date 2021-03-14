@@ -2,6 +2,7 @@
 
 OC_URL="https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz"
 GOVC_URL="https://github.com/vmware/govmomi/releases/download/v0.24.0/govc_linux_amd64.gz"
+BIN_DIR=${HOME}/bin
 
 die() {
 	echo "$1"
@@ -143,9 +144,9 @@ check_oc() {
 }	
 
 install_oc() {
-	echo "This script will attempt to download the most recent stable version to your working directory."
-	curl -L ${OC_URL} | gunzip > oc
-	chmod +x oc
+	curl -L ${OC_URL} | gunzip > ${BIN_DIR}/oc
+	chmod +x ${BIN_DIR}/oc
+	echo "The oc application has been downloaded to directory ${BIN_DIR}"
 }	
 
 check_govc() {
@@ -165,9 +166,9 @@ check_govc() {
 }
 
 install_govc() {
-	echo "This script will attempt to download the most recent stable version to your working directory."
-	curl -L ${GOVC_URL} | gunzip > govc 
-	chmod +x govc
+	curl -L ${GOVC_URL} | gunzip > ${BIN_DIR}/govc 
+	chmod +x ${BIN_DIR}/govc
+	echo "The govc application has been downloaded to the directory ${BIN_DIR}"	
 }	
 
 install_cluster_tools(){
@@ -184,8 +185,6 @@ install_cluster_tools(){
 	if [ ! -d bin ]; then
 		mkdir bin
 	fi
-
-
 
 	oc adm release extract --to bin --tools ${pull_url} 
 	tar xvf bin/${installer_file_name} -C bin
