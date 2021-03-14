@@ -1,7 +1,7 @@
 #!/bin/bash
 
-OC_URL="https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz"
-GOVC_URL="https://github.com/vmware/govmomi/releases/download/v0.24.0/govc_linux_amd64.gz"
+OC_DOWNLOAD_URL="https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz"
+GOVC_DOWNLOAD_URL="https://github.com/vmware/govmomi/releases/download/v0.24.0/govc_linux_amd64.gz"
 BIN_DIR=${HOME}/bin
 
 die() {
@@ -149,7 +149,7 @@ check_oc() {
 }	
 
 install_oc() {
-	curl -L ${OC_URL} > /tmp/oc.tar.gz
+	curl -L ${OC_DOWNLOAD_URL} > /tmp/oc.tar.gz
 	tar xvf /tmp/oc.tar.gz -C /tmp 
 	mv /tmp/oc ${BIN_DIR}
 	mv /tmp/kubectl ${BIN_DIR}
@@ -173,7 +173,7 @@ check_govc() {
 }
 
 install_govc() {
-	curl -L ${GOVC_URL} | gunzip > ${BIN_DIR}/govc 
+	curl -L ${GOVC_DOWNLOAD_URL} | gunzip > ${BIN_DIR}/govc 
 	chmod +x ${BIN_DIR}/govc
 	echo "The govc application has been downloaded to the directory ${BIN_DIR}"	
 }	
@@ -304,16 +304,16 @@ build_cluster(){
 }	
 
 destroy() {
-
 	echo "If you really want to delete the cluster ${cluster_name}, type its name again:"
 	read response
-
+	
 	if [[ "${response}" == "${cluster_name}" ]]; then
 		echo "Destroying cluster: ${cluster_name}"
 		# Destroy the master nodes
 
 		for (( i=0; i<${master_node_count}; i++ )); do
 			vm="master-${i}.${cluster_name}"
+			echo "master: $vm"
 			govc vm.destroy $vm
 		done
 
