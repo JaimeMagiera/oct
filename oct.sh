@@ -144,9 +144,11 @@ check_oc() {
 }	
 
 install_oc() {
-	curl -L ${OC_URL} | gunzip > ${BIN_DIR}/oc
-	chmod +x ${BIN_DIR}/oc
-	echo "The oc application has been downloaded to directory ${BIN_DIR}"
+	curl -L ${OC_URL} > /tmp/oc.tar.gz
+	tar xvf /tmp/oc.tar.gz -C /tmp 
+	mv /tmp/oc ${BIN_DIR}
+	mv /tmp/kubectl ${BIN_DIR}
+	echo "The oc and kubectl applications have been downloaded to directory ${BIN_DIR}"
 }	
 
 check_govc() {
