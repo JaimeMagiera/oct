@@ -15,9 +15,6 @@ while :; do
 			show_help
 			exit
 			;;
-		--auto)
-			auto_select=1
-			;;
 		--auto-secret)
 			auto_secret=1
 			;;    
@@ -36,6 +33,14 @@ while :; do
 		--clean)
 			clean=1
 			;;
+		--release)
+                        if [ "$2" ]; then
+                                release=$2
+                                shift
+                        else
+                                die 'ERROR: "--release" requires a non-empty option argument.'
+                        fi
+                        ;;
 		--cluster-power)
 			if [ "$2" ]; then
 				cluster_power_action=$2
@@ -175,10 +180,12 @@ install_govc() {
 
 install_cluster_tools(){
 
-	if [ -z ${release_version} ]; then
-		release_info=$(oc adm release info registry.ci.openshift.org/origin/release:4.7)
+	if [[ -v release ]]; then
+		release_info=$(oc adm release info registry.ci.openshift.org/origin/release:"${release}")
 		release_version=$(echo "${release_info}" | grep Name | awk '{print $2}')
 		pull_url=$(echo "${release_info}" | grep "Pull From:" | awk '{print $3}')	
+	else      
+		echo "Please use the --release flag to denote what version you'd like to install."
 	fi
 
 	installer_file_name="openshift-install-linux-${release_version}.tar.gz"
@@ -187,6 +194,7 @@ install_cluster_tools(){
 	if [ ! -d bin ]; then
 		mkdir bin
 	fi
+	echo "Downloading the cluster tools for ${release_version}..."
 
 	oc adm release extract --to bin --tools ${pull_url} 
 	tar xvf bin/${installer_file_name} -C bin
