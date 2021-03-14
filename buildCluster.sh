@@ -40,6 +40,14 @@ while :; do
             else
                 die 'ERROR: "--power" requires a non-empty option argument.'
             fi
+            ;;
+	 --library)
+            if [ "$2" ]; then
+                library=$2
+                shift
+            else
+                die 'ERROR: "--library" requires a non-empty option argument.'
+            fi
             ;;	    
          --template-name)
             if [ "$2" ]; then
@@ -57,9 +65,9 @@ while :; do
                 die 'ERROR: "--cluster-name" requires a non-empty option argument.'
             fi
             ;;
-         --vm-folder)
+         --cluster-folder)
             if [ "$2" ]; then
-                vm_folder=$2
+                cluster_folder=$2
                 shift
             else
                 die 'ERROR: "--vm-folder" requires a non-empty option argument.'
@@ -172,6 +180,29 @@ launch_prerun() {
 	sudo /usr/sbin/restorecon -Rv /var/www/html
 }
 
+deploy_node() {
+	govc library.deploy --folder "${cluster_folder}" "${library}/${template_name}" "${vm_name}"
+	govc vm.change -vm "${vm_name}" \
+		-c="${vm_cpu}" \
+		-m="${vm_memory}" 
+	govc vm.change -vm "${vm_name}" -e guestinfo.ignition.config.data="$(cat ${ignition_file_path} | base64 -w0)" -e guestinfo.ignition.config.data.encoding="base64"
+	govc vm.disk.change -vm "${vm_name}" -disk.label "Hard disk 1" -size ${vm_disk}G
+
+	if [[ ! -z "${ipcfg}" ]]; then
+		govc vm.change -vm "${vm_name}" -e "guestinfo.afterburn.initrd.network-kargs=${ipcfg}"
+	fi
+	
+	if [[ ! -z "${vm_mac}" ]]; then
+		govc vm.network.change -vm ${vm_name} -net "${cluster_network}" -net.address ${vm_mac} ethernet-0
+	fi
+
+	if [[ ! -z "${boot_vm}" ]]; then
+		govc vm.power -on "${vm_name}"
+	fi
+}
+	
+
+
 build_cluster(){
 	
 	bootstrap_cpu=4
@@ -184,57 +215,76 @@ build_cluster(){
 	worker_memory=16384
 	worker_disk=120
 
-
 	echo "Cluster: ${cluster_name}"
 	echo "Template: ${template_name}"
 	echo "Datastore: ${datastore_name}"
-	echo "Folder: ${vm_folder}"
+	echo "Folder: ${cluster_folder}"
 	echo "Network: ${network_name}"
 	echo "Installation Folder: ${installation_folder}"
 
 	# Create the bootstrap node
 	echo "Creating a bootstrap node with ${bootstrap_cpu} cpus and ${bootstrap_memory} MB of memory"
-
-	vm="bootstrap.${cluster_name}"
-	deploy-coreos-node.sh -v --ova "$template_name" --name "${vm}" --cpu "${bootstrap_cpu}"  --memory "${bootstrap_memory}" --disk "${bootstrap_disk}"  --folder "${vm_folder}" --library "Linux ISOs" --ignition "${installation_folder}/append-bootstrap.ign" --boot
+	vm_name="bootstrap.${cluster_name}"
+	vm_cpu="${bootstrap_cpu}"
+	vm_memory="${bootstrap_memory}"
+	vm_disk="${bootstrap_disk}"
+	vm_name="bootstrap.${cluster_name}"
+	ignition_file_path="${installation_folder}/append-bootstrap.ign"
+	
+	deploy_node
 
 	# Create the master nodes
 	echo "Creating ${master_node_count} master nodes with ${master_cpu} cpus and ${master_memory} MB of memory"
+	vm_cpu="${master_cpu}"
+        vm_memory="${master_memory}"
+        vm_disk="${master_disk}"
+        ignition_file_path="${installation_folder}/master.ign"
 
 	for (( i=0; i<${master_node_count}; i++ )); do
-        	vm="master-${i}.${cluster_name}"
-        	deploy-coreos-node.sh -v --ova "$template_name" --name "${vm}" --cpu "${master_cpu}"  --memory "${master_memory}" --disk "${master_disk}"  --folder "${vm_folder}" --library "Linux ISOs" --ignition "${installation_folder}/master.ign" --boot
+      		vm_name="master-${i}.${cluster_name}"
+		deploy_node
 	done
 
 	# Create the worker nodes
 	echo "Creating ${worker_node_count} worker nodes with ${worker_cpu} cpus and ${worker_memory} MB of memory"
+	vm_cpu="${worker_cpu}"
+        vm_memory="${worker_memory}"
+        vm_disk="${worker_disk}"
+        ignition_file_path="${installation_folder}/worker.ign"
 
 	for (( i=0; i<${worker_node_count}; i++ )); do
-        	vm="worker-${i}.${cluster_name}"
-        	deploy-coreos-node.sh --ova "$template_name" --name "${vm}" --cpu "${worker_cpu}"  --memory "${worker_memory}" --disk "${worker_disk}"  --folder "${vm_folder}" --library "Linux ISOs" --ignition "${installation_folder}/worker.ign" --boot
+        	vm_name="worker-${i}.${cluster_name}"
+		deploy_node
 	done
 }	
 
 destroy() {
-	echo "Destroying cluster: ${cluster_name}"
 
-	# Destroy the master nodes
+	echo "If you really want to delete the cluster ${cluster_name}, type its name again:"
+	read response
 
-	for (( i=0; i<${master_node_count}; i++ )); do
-        	vm="master-${i}.${cluster_name}"
+	if [[ "${response}" == "${cluster_name}" ]]; then
+		echo "Destroying cluster: ${cluster_name}"
+		# Destroy the master nodes
+
+		for (( i=0; i<${master_node_count}; i++ )); do
+        		vm="master-${i}.${cluster_name}"
+			govc vm.destroy $vm
+		done
+
+		# Destroy the worker nodes
+
+		for (( i=0; i<${worker_node_count}; i++ )); do
+			vm="worker-${i}.${cluster_name}"
+			govc vm.destroy $vm
+		done
+
+		# Destroy the bootstrap node
+		vm="bootstrap.${cluster_name}"
 		govc vm.destroy $vm
-	done
-
-	# Destroy the worker nodes
-
-	for (( i=0; i<${worker_node_count}; i++ )); do
-		vm="worker-${i}.${cluster_name}"
-		govc vm.destroy $vm
-	done
-
-	# Destroy the bootstrap node
-	vm="bootstrap.${cluster_name}"
-	govc vm.destroy $vm
+	else
+		echo "OK, I'll forget you ever mentioned it."
+	fi
 }	
 
 clean() {
