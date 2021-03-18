@@ -1,4 +1,4 @@
-# Implementing an Automated Testing Solution for OKD Installs
+# Implementing an Automated Testing Solution for OKD Installs on vSphere with User Provisioned Infrastructure (UPI)
 
 ## Introduction 
 
@@ -6,7 +6,12 @@ Being a community project, OKD benefits greatly from from repeated testing of in
 
 ## Prerequisites
 
-## About OCT
+### DNS
+### DHCP
+### Load Balancer
+### Proxy
+
+## Using OCT
 
 ## Creating a Wrapper Script
 
