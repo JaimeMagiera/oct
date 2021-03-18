@@ -29,6 +29,18 @@ This function downloads the *oc*, *kubectl*, and *openshift-installer* binaries 
 
 This function makes a copy of the install-confit.yaml.template file, inserts a pull secret, runs "openshift-installer create manifests" command with that new config file. It then modifies the resulting manifests appropriately for an OKD cluster by, for example, disabling scheduling on the control plane nodes. The script then runs the "openshift-installer create ignition-configs" to general the igition files for the masters and workers. Finally, it copies the bootstrap-append.yaml file to the /var/www/html folder of the deployment controller machine to make it available to the bootstrap node via http. 
 
+### deploy_node()
+
+### build_cluster()
+
+### manage_power()
+
+### destroy()
+
+### clean()
+
+
+
 ## Creating a Wrapper Script
 
 ## Extending the Setup
