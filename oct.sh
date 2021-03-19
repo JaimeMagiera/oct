@@ -262,8 +262,7 @@ build_cluster(){
 
 	echo "Cluster: ${cluster_name}"
 	echo "Template: ${template_name}"
-	echo "Datastore: ${datastore_name}"
-	echo "Folder: ${cluster_folder}"
+	echo "Cluster Folder: ${cluster_folder}"
 	echo "Network: ${network_name}"
 	echo "Installation Folder: ${installation_folder}"
 
@@ -303,7 +302,7 @@ build_cluster(){
 	done
 }	
 
-destroy() {
+destroy_cluster() {
 	echo "If you really want to delete the cluster ${cluster_name}, type its name again:"
 	read response
 	
@@ -375,7 +374,7 @@ if [ ! -z ${build} ]; then
 fi
 
 if [ ! -z ${destroy} ]; then
-	destroy
+	destroy_cluster
 fi
 
 if [ ! -z ${cluster_power_action} ]; then
