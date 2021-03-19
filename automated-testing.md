@@ -35,6 +35,8 @@ This function calls the govc binary to duplicate a VM template and set desired c
 
 ### build_cluster()
 
+This function makes calls to deploy_node() to deploy a bootstrap node, then iteratively deploy master and worker nodes– all with the appropriate ignition configuration file. 
+
 ### manage_power()
 
 ### destroy()
