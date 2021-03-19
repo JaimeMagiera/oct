@@ -37,11 +37,13 @@ This function calls the govc binary to duplicate a VM template and set desired c
 
 This function makes calls to deploy_node() to deploy a bootstrap node, then iteratively deploy master and worker nodes– all with the appropriate ignition configuration file. 
 
+### destroy-cluster()
+
+This function iterately deletes each VM of the cluster by using the --cluster-name, --master-node-count, and --worker-node-count values to construct its name. 
+
 ### manage_power()
 
 This function uses the --cluster-name, --master-node-count, and --worker-node-count to iterivately construct node names, reaching out to each to perform either power on or power off based on the --cluster-power flag. 
-
-### destroy()
 
 ### clean()
 
