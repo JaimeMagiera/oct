@@ -52,7 +52,7 @@ This function uses the --cluster-name, --master-node-count, and --worker-node-co
 
 ### clean()
 
-This function removes the remaining configuration and log files of the current working directory after running the openshift-installer. 
+This function removes the remaining configuration and log files of the current working directory after running the openshift-installer. That includes: the master.ign, worker.ign metadata.json, bootstrap.ign, .openshift_install* logs, and the auth folder. 
 
 ## Automating Installations with a Wrapper Script
 
