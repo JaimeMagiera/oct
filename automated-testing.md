@@ -54,6 +54,27 @@ This function uses the --cluster-name, --master-node-count, and --worker-node-co
 
 This function removes the remaining configuration and log files of the current working directory after running the openshift-installer. 
 
-## Creating a Wrapper Script
+## Automating Installations with a Wrapper Script
+
+It's possible to completely automate the process of installing OpenShift/OKD on vSphere with User Provisioned Infrastructure by chaining together the various functions of oct via a wrapper script. Here's an example...
+
+``` bash
+#!/bin/bash
+
+masters_count=3
+workers_count=2
+template_name="fedora-coreos-33.20210201.2.1-vmware.x86_64"		
+cluster_name="example"
+cluster_folder="/vCloud/vm/example"
+network_name="VM Network"
+install_folder=`pwd`
+
+oct.sh --install-tools --release 4.6
+oct.sh --prerun --auto-secret
+oct.sh --build --template-name "${template_name}" --library "Linux ISOs" --cluster-name "${cluster_name}" --cluster-folder "${cluster_folder}" --network-name "${network_name}" --installation-folder "${install_folder}" --master-node-count ${masters_count} --worker-node-count ${workers_count} 
+oct.sh --cluster-power on --cluster-name "${cluster_name}"  --master-node-count ${masters_count} --worker-node-count ${workers_count}
+bin/openshift-install --dir=$(pwd) wait-for bootstrap-complete  --log-level=info
+
+```
 
 ## Extending the Setup
