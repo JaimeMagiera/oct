@@ -47,7 +47,7 @@ This function uses the --cluster-name, --master-node-count, and --worker-node-co
 
 ### clean()
 
-
+This function removes the remaining onfiguration and log files of the current working directory after running the openshift-installer. 
 
 ## Creating a Wrapper Script
 
