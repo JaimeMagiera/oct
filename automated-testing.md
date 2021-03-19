@@ -31,6 +31,8 @@ This function makes a copy of the install-confit.yaml.template file, inserts a p
 
 ### deploy_node()
 
+This function calls the govc binary to duplicate a VM template and set desired cpu, memory, and storage values. It can optionally add Afterburn kernel arguments such as static IP configuration and set the mac address of the VM. The function uses the presence of the --boot flag to determine if the completed node should be booted or not after being configured. 
+
 ### build_cluster()
 
 ### manage_power()
