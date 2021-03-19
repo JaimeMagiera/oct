@@ -7,6 +7,11 @@ Being a community project, OKD benefits greatly from from repeated testing of in
 ## Prerequisites
 
 ### DNS
+
+* 1 entry for the bootstrap node of the format bootstrap.[cluster].domain.tld
+* 3 entries for the master nodes of the form master-[n].[cluster].domain.tld
+* An extry for each of the desired worker nodes in the form worker-[n].[cluster].domain.tld
+
 ### DHCP
 ### Load Balancer
 ### Proxy
