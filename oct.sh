@@ -107,6 +107,18 @@ while :; do
 		--clean)
 			clean=1
 			;;
+                --import-template)
+                        import_template=1
+			;;
+                --template-url)
+                        if [ "$2" ]; then
+                                template_url=$2
+                                shift
+                        else
+                                die 'ERROR: "--template-url" requires a non-empty option argument.'
+                        fi
+                        ;;
+
 		--release)
                         if [ "$2" ]; then
                                 release=$2
@@ -251,6 +263,31 @@ install_govc() {
 	chmod +x ${BIN_DIR}/govc
 	echo "The govc application has been downloaded to the directory ${BIN_DIR}"	
 }	
+
+import_template_from_url(){
+	file_name=$(basename ${template_url})
+	template_name="${file_name%.*}"
+	template_exists=false
+
+	echo "Checking for ${template_name} in library ${library}"
+	library_items=$(govc library.ls "${library}/*")
+	while IFS= read -r line; do
+  		library_item_name=$(echo  ${line} | cut -d'/' -f 3)
+  		echo "Library Item: $library_item_name"
+  		if [[ "$library_item_name" ==  "$template_name" ]]; then
+    			echo "Template already exists in library"
+    			template_exists=true
+    			break
+  		fi
+	done <<< "$library_items"
+
+	if [[ "$template_exists" == false ]]; then
+  		echo "Importing template to library"
+  		curl -s -i -O ${template_url}
+  		govc library.import -k=true "${library}" "${template_url}"
+		echo "template_name"
+	fi
+}
 
 install_cluster_tools(){
 
@@ -438,6 +475,10 @@ check_govc
 if [ ! -z ${install_tools} ]; then
 	install_cluster_tools	
 fi	
+
+if [ ! -z ${import_template} ]; then
+        import_template_from_url
+fi
 
 if [ ! -z ${prerun} ]; then
 	launch_prerun
