@@ -20,7 +20,7 @@ It's possible to completely automate the process of installing OpenShift/OKD on 
 
 * 1 entry for the bootstrap node of the format bootstrap.[cluster].domain.tld
 * 3 entries for the master nodes of the form master-[n].[cluster].domain.tld
-* An extry for each of the desired worker nodes in the form worker-[n].[cluster].domain.tld
+* An entry for each of the desired worker nodes in the form worker-[n].[cluster].domain.tld
 * 1 entry for the API endpoint in the form api.[cluster].domain.tld
 * 1 entry for the API internal endpoint in the form api-int.[cluster].domain.tld
 * 1 wilcard entry for the Ingress endpoint in the form \*.apps.[cluster].domain.tld
