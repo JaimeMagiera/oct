@@ -9,10 +9,10 @@ It's possible to completely automate the process of installing OpenShift/OKD on 
 1. Deploy the DNS, DHCP, and load balancer infrastructure outlined in the Prerequisites section.
 2. Create an install-config.yaml.template file based on the format outlined in the section [Sample install-config.yaml file for VMware vSphere](https://docs.okd.io/latest/installing/installing_vsphere/installing-vsphere.html#installation-vsphere-config-yaml_installing-vsphere) of the OKD docs. Do not add a pull secret. The script will query you for one or it will insert a default one if you use the --auto-secret flag. 
 3. Create a wrapper script that:
-* Downloads the oc and openshift-installer binaries for your desired release version
-* Generates and modifies the ignition files appropriately
-* Builds the cluster nodes
-* Triggers installation process. 
+  * Downloads the oc and openshift-installer binaries for your desired release version
+  * Generates and modifies the ignition files appropriately
+  * Builds the cluster nodes
+  * Triggers installation process. 
 
 ## Prerequisites
 
