@@ -74,4 +74,5 @@ bin/openshift-install --dir=$(pwd) wait-for bootstrap-complete  --log-level=info
 
 ```
 
-## Extending the Setup
+## Future Updates
+* Generating the install-config template
