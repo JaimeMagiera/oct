@@ -2,7 +2,7 @@
 
 ## Introduction 
 
-Being a community project, OKD benefits greatly from from repeated testing of installation and functionality. In an effort to simplify the process of conducting repeated OKD installs on vSphere UPI, I developed a script that handles each step of the installation process— from downloading the installer to cleaning up after the installer complete. The script is modular in the sense that each task is a separate function in the script. This allows youk to arrange tasks in different combinations by calling them in a wrapper script. 
+It's possible to completely automate the process of installing OpenShift/OKD on vSphere with User Provisioned Infrastructure by chaining together the various functions of oct via a wrapper script. 
 
 ## Prerequisites
 
@@ -29,10 +29,7 @@ If the cluster will sit on a private network, you'll need a proxy for outgoing t
 
 The proxy should be configured to accept conections from the IP subnet for your cluster. A simple proxy to use for this purpose is [squid](http://www.squid-cache.org) 
 
-
-## Automating Installations with a Wrapper Script
-
-It's possible to completely automate the process of installing OpenShift/OKD on vSphere with User Provisioned Infrastructure by chaining together the various functions of oct via a wrapper script. Here's an example...
+# Wrapper Script
 
 ``` bash
 #!/bin/bash
