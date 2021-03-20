@@ -12,6 +12,7 @@ Being a community project, OKD benefits greatly from from repeated testing of in
 * 3 entries for the master nodes of the form master-[n].[cluster].domain.tld
 * An extry for each of the desired worker nodes in the form worker-[n].[cluster].domain.tld
 * 1 entry for the API endpoint in the form api.[cluster].domain.tld
+* 1 entry for the API internal endpoint in the form api-int.[cluster].domain.tld
 * 1 wilcard entry for the Ingress endpoint in the form \*.apps.[cluster].domain.tld
 
 ### DHCP
@@ -44,7 +45,9 @@ This function downloads the *oc*, *kubectl*, and *openshift-installer* binaries 
 
 ### launch_prerun()
 
-This function makes a copy of the install-confit.yaml.template file, inserts a pull secret, runs "openshift-installer create manifests" command with that new config file. It then modifies the resulting manifests appropriately for an OKD cluster by, for example, disabling scheduling on the control plane nodes. The script then runs the "openshift-installer create ignition-configs" to general the igition files for the masters and workers. Finally, it copies the bootstrap-append.yaml file to the /var/www/html folder of the deployment controller machine to make it available to the bootstrap node via http. 
+This function makes a copy of a install-confit.yaml.template file, inserts a pull secret, runs "openshift-installer create manifests" command with that new config file. It then modifies the resulting manifests appropriately for an OKD cluster by, for example, disabling scheduling on the control plane nodes. The script then runs the "openshift-installer create ignition-configs" to general the igition files for the masters and workers. Finally, it copies the bootstrap-append.yaml file to the /var/www/html folder of the deployment controller machine to make it available to the bootstrap node via http. 
+
+Note: The openshift-installer injests and deletes the install configuration file. That's why oct makes a copy of a template you've created to pass to the installer. For more details on the format of the instal-config.yaml file, please see the section [Sample install-config.yaml file for VMware vSphere](https://docs.okd.io/latest/installing/installing_vsphere/installing-vsphere.html#installation-vsphere-config-yaml_installing-vsphere) of the OKD documentention
 
 ### deploy_node()
 
