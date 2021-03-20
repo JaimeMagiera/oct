@@ -13,10 +13,6 @@ Being a community project, OKD benefits greatly from from repeated testing of in
 ### --install-tools
 
   Calls the install_cluster_tools() function. This flag should be used in conjunction with the --release flag.
-  
-### --release *version
-  The release version you wish to install the OKD/OpenShift tools for. This can be the complete release version (e.g. "4.7.0-0.okd-2021-03-07-090821") or the just the major.minor version, in which case the latest build of that version will be used (e.g. "4.7")
-
 
 ### --prerun 
 
@@ -32,41 +28,44 @@ Being a community project, OKD benefits greatly from from repeated testing of in
 
 ### --clean
 
-  Calls the clean() function, which removes all generated files from an installation. 
-
-### --cluster-power *[on/off]
+  Calls the clean() function, which removes all generated files from an installation.
+  
+### --release *version*
+  The release version you wish to install the OKD/OpenShift tools for. This can be the complete release version (e.g. "4.7.0-0.okd-2021-03-07-090821") or the just the major.minor version, in which case the latest build of that version will be used (e.g. "4.7")
+  
+### --cluster-power *[on/off]*
 
   Calls the manage_power()function. Values are "on" and "off". This should be accompanied by the --cluster-name, --master-node-count, and --worker-node-count flags with their appropriate values.
 
-### --library *name
+### --library *name*
 
   The name of the vSphere Content Library where the VM template can be found
 
-### --template-name *name
+### --template-name *name*
 
   The name of the VM template to use when deploying nodes
 
-### --cluster-name *name 
+### --cluster-name *name* 
 
   The name of the cluster. This is used for assembling the node names and URLs (e.g. worker-1.*name.example.com)
   
-### --master-node-count *number
+### --master-node-count *number*
 
   The desired number of master nodes. This flag should be used in conjunction with --worker-node-count, --build, --destroy, and --cluster-power.
 
-### --worker-node-count *number 
+### --worker-node-count *number* 
 
   The desired number of worker nodes. This flag should be used in conjunction with --master-node-count, --build, --destroy, and --cluster-power. 
 
-### --cluster-folder *folder
+### --cluster-folder *folder*
 
   The folder on vSphere where the VMs will be deployed into. 
 
-### --network-name *name
+### --network-name *name*
 
   The name of the vSphere network that the deployed VMs should use (e.g. the default "VM Network")
 
-## --installation-folder *path
+## --installation-folder *path*
 
   The path to the folder with the installation materials. 
 
