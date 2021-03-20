@@ -20,7 +20,7 @@ It's possible to completely automate the process of installing OpenShift/OKD on 
 
 * 1 entry for the bootstrap node of the format bootstrap.[cluster].domain.tld
 * 3 entries for the master nodes of the form master-[n].[cluster].domain.tld
-* An extry for each of the desired worker nodes in the form worker-[n].[cluster].domain.tld
+* An entry for each of the desired worker nodes in the form worker-[n].[cluster].domain.tld
 * 1 entry for the API endpoint in the form api.[cluster].domain.tld
 * 1 entry for the API internal endpoint in the form api-int.[cluster].domain.tld
 * 1 wilcard entry for the Ingress endpoint in the form \*.apps.[cluster].domain.tld
@@ -35,7 +35,7 @@ vSphere UPI requires the use of a load balancer. There needs to be two pools.
 
 ### Proxy (Optional)
 
-If the cluster will sit on a private network, you'll need a proxy for outgoing traffic, but for the install process and for regular operation. In the case of the former, the installer needs to pull containers from the external registires. In the case of the latter, the proxy is needed when applicaton containers need access to the outside world (e.g. yum installs, external code repositories like gitlab, etc.) 
+If the cluster will sit on a private network, you'll need a proxy for outgoing traffic, both for the install process and for regular operation. In the case of the former, the installer needs to pull containers from the external registires. In the case of the latter, the proxy is needed when applicaton containers need access to the outside world (e.g. yum installs, external code repositories like gitlab, etc.) 
 
 The proxy should be configured to accept conections from the IP subnet for your cluster. A simple proxy to use for this purpose is [squid](http://www.squid-cache.org) 
 
