@@ -30,6 +30,14 @@ Being a community project, OKD benefits greatly from from repeated testing of in
 
   Calls the clean() function, which removes all generated files from an installation.
   
+### --import-template
+
+  Calls the import_template_from_url() function. Should be used in conjunction with the --template-url flag.
+  
+### --template-url
+
+  The URL of the ova template to import.
+  
 ### --release *version*
   The release version you wish to install the OKD/OpenShift tools for. This can be the complete release version (e.g. "4.7.0-0.okd-2021-03-07-090821") or the just the major.minor version, in which case the latest build of that version will be used (e.g. "4.7")
   
