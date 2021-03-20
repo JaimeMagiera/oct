@@ -1,7 +1,7 @@
 # oct
 OCT is a command line tool to simplify the process of building and destroying OKD/Openshift clusters in vSphere. It utilizes the govc command line tool to communicate with vSphere.
 
-## The Command Line Arguments of oct##
+## The Command Line Arguments of oct
 -h|-\?|--help
 
 --auto
