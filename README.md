@@ -4,23 +4,31 @@ OCT is a command line tool to simplify the process of building and destroying OK
 Being a community project, OKD benefits greatly from from repeated testing of installation and functionality. In an effort to simplify the process of conducting repeated OKD installs on vSphere UPI, I developed this script to handle each step of the installation process— from downloading the installer to cleaning up after the installer complete. The script is modular in the sense that each task is a separate function in the script. This allows youk to arrange tasks in different combinations by calling them in a wrapper script. For an example, see the page [Implementing an Automated Testing Solution for OKD Installs on vSphere with User Provisioned Infrastructure (UPI)](https://github.com/JaimeMagiera/oct/blob/master/automated-testing.md).
 
 ## The Command Line Arguments of oct
--h|-\?|--help
+### -h|-\?|--help
 
---auto-secret
+### --auto-secret
 
-  Automatically use the "dummy" pull secret instead of prompting for one
+  Automatically use the "dummy" pull secret instead of prompting for one.
 
---install-tools
+### --install-tools
 
   Calls the install_cluster_tools() function. This flag should be used in conjunction with the --release flag.
   
---release  
+### --release  
+  The release version you wish to install the OKD/OpenShift tools for. This can be the complete release version (e.g. "4.7.0-0.okd-2021-03-07-090821") or the just the major.minor version, in which case the latest build of that version will be used (e.g. "4.7")
 
---prerun
 
---build
+### --prerun 
 
---destroy
+  Call the launch_prerun() function. 
+
+### --build
+
+  Calls the build_cluster() function. This flag should be accompanied by the --template-name, --library, --cluster-name, --cluster-folder, --network-name, --installation-folder, --master-node-count, and --worker-node-count flags with their appropriate values.
+
+### --destroy
+
+  Calls the destroy-cluster() function. This should be accompanied by the --cluster-name, --master-node-count, and --worker-node-count flags with their appropriate values.
 
 --clean
 
