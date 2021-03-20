@@ -30,9 +30,13 @@ Being a community project, OKD benefits greatly from from repeated testing of in
 
   Calls the destroy-cluster() function. This should be accompanied by the --cluster-name, --master-node-count, and --worker-node-count flags with their appropriate values.
 
---clean
+### --clean
 
---cluster-power
+  Calls the clean() function, which removes all generated files from an installation. 
+
+### --cluster-power [on/off]
+
+  Calls the manage_power()function. Values are "on" and "off". This should be accompanied by the --cluster-name, --master-node-count, and --worker-node-count flags with their appropriate values.
 
 --library
 
