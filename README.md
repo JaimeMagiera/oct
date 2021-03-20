@@ -14,7 +14,7 @@ Being a community project, OKD benefits greatly from from repeated testing of in
 
   Calls the install_cluster_tools() function. This flag should be used in conjunction with the --release flag.
   
-### --release  
+### --release *version
   The release version you wish to install the OKD/OpenShift tools for. This can be the complete release version (e.g. "4.7.0-0.okd-2021-03-07-090821") or the just the major.minor version, in which case the latest build of that version will be used (e.g. "4.7")
 
 
@@ -34,27 +34,45 @@ Being a community project, OKD benefits greatly from from repeated testing of in
 
   Calls the clean() function, which removes all generated files from an installation. 
 
-### --cluster-power [on/off]
+### --cluster-power *[on/off]
 
   Calls the manage_power()function. Values are "on" and "off". This should be accompanied by the --cluster-name, --master-node-count, and --worker-node-count flags with their appropriate values.
 
---library
+### --library *name
 
---template-name
+  The name of the vSphere Content Library where the VM template can be found
 
---cluster-name
+### --template-name *name
 
---cluster-folder
+  The name of the VM template to use when deploying nodes
 
---network-name
+### --cluster-name *name 
 
---installation-folder
+  The name of the cluster. This is used for assembling the node names and URLs (e.g. worker-1.*name.example.com)
+  
+### --master-node-count *number
 
---master-node-count
+  The desired number of master nodes. This flag should be used in conjunction with --worker-node-count, --build, --destroy, and --cluster-power.
 
---worker-node-count
+### --worker-node-count *number 
 
--v|--verbose 
+  The desired number of worker nodes. This flag should be used in conjunction with --master-node-count, --build, --destroy, and --cluster-power. 
+
+### --cluster-folder *folder
+
+  The folder on vSphere where the VMs will be deployed into. 
+
+### --network-name *name
+
+  The name of the vSphere network that the deployed VMs should use (e.g. the default "VM Network")
+
+## --installation-folder *path
+
+  The path to the folder with the installation materials. 
+
+## -v|--verbose 
+
+  Set the verbosity level.
 
 ## The Functions of oct
 
