@@ -1,4 +1,4 @@
-# Implementing an Automated Testing Solution for OKD Installs on vSphere with User Provisioned Infrastructure (UPI)
+# Implementing an Automated Installation Solution for OKD on vSphere with User Provisioned Infrastructure (UPI)
 
 ## Introduction 
 
