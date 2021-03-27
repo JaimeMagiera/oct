@@ -254,6 +254,17 @@ while :; do
 		--boot)
                         boot_vm=1
                         ;;
+		--query-fcos)
+                        query_fcos=1
+                        ;;	
+		--stream-name)
+			if [ "$2" ]; then
+                                stream_name=$2
+                                shift
+                        else
+                                die 'ERROR: "--stream-name" requires a non-empty option argument.'
+                        fi
+                        ;;	
 		-v|--verbose)
 			verbose=$((verbose + 1))
 			;;
@@ -523,6 +534,14 @@ manage_cluster_power() {
 
 }
 
+query_fcos_stream() {
+	stream_data=$(curl -s https://builds.coreos.fedoraproject.org/streams/${stream_name}.json)
+	file_url=$(echo ${stream_data} | jq -r '.architectures.x86_64.artifacts.vmware.formats.ova.disk.location')
+	file_name=$(basename ${file_url})
+	template_name="${file_name%.*}"
+	echo "${file_url}"
+}
+
 check_oc
 check_govc
 
@@ -558,3 +577,6 @@ if [ ! -z ${clean} ]; then
 	clean
 fi
 
+if [ ! -z ${query_fcos} ]; then
+        query_fcos_stream
+fi
