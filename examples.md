@@ -1,5 +1,9 @@
 # Examples
 
+## Deploying an OKD Cluster
+
+Please see [Implementing an Automated Installation Solution for OKD on vSphere with User Provisioned Infrastructure (UPI)](https://github.com/JaimeMagiera/oct/blob/master/automated-installations.md)
+
 ## Deploying a single CoreOS node
 
 ```/bin/bash
