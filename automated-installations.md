@@ -1,4 +1,4 @@
-# Implementing an Automated Testing Solution for OKD Installs on vSphere with User Provisioned Infrastructure (UPI)
+# Implementing an Automated Installation Solution for OKD on vSphere with User Provisioned Infrastructure (UPI)
 
 ## Introduction 
 
@@ -56,7 +56,7 @@ network_name="VM Network"
 install_folder=`pwd`
 
 # Import the template
-#./oct.sh --import-template --library "${library}" --template-url "${template_url}"
+./oct.sh --import-template --library "${library}" --template-url "${template_url}"
 
 # Install the desired OKD tools
 oct.sh --install-tools --release 4.6
@@ -77,3 +77,4 @@ bin/openshift-install --dir=$(pwd) wait-for bootstrap-complete  --log-level=info
 
 ## Future Updates
 * Generating the install-config template
+* Pull directly from FCOS release feed

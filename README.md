@@ -30,11 +30,11 @@ Being a community project, OKD benefits greatly from from repeated testing of in
 
   Calls the clean() function, which removes all generated files from an installation.
   
-### --import-template
+### --import-template 
 
   Calls the import_template_from_url() function. Should be used in conjunction with the --template-url flag.
   
-### --template-url
+### --template-url *url*
 
   The URL of the ova template to import.
   
