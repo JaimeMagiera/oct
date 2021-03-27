@@ -1,6 +1,6 @@
-* Examples
+# Examples
 
-** Deploying a single CoreOS node
+## Deploying a single CoreOS node
 
 ```/bin/bash
 template_name=fedora-coreos-33.20210315.1.0-vmware.x86_64
