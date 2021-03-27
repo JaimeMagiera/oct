@@ -103,7 +103,10 @@ while :; do
 			;;
 		--destroy)
 			destroy=1
-			;;		    
+			;;
+    		--deploy-node)
+			deploy_single_node=1
+                        ;;			
 		--clean)
 			clean=1
 			;;
@@ -200,6 +203,57 @@ while :; do
 			fi
 			;;
 
+		--vm-name)
+                        if [ "$2" ]; then
+                                vm_name=$2
+                                shift
+                        else
+                                die 'ERROR: "--vm-name" requires a non-empty option argument.'
+                        fi
+                        ;;
+		--vm-cpu)
+                        if [ "$2" ]; then
+                               vm_cpu=$2
+                                shift
+                        else
+                                die 'ERROR: "--vm-cpu" requires a non-empty option argument.'
+                        fi
+                        ;;
+		--vm-memory)
+                        if [ "$2" ]; then
+                                vm_memory=$2
+                                shift
+                        else
+                                die 'ERROR: "--vm-memory requires a non-empty option argument.'
+                        fi
+                        ;;
+		--vm-disk)
+                        if [ "$2" ]; then
+                                vm_disk=$2
+                                shift
+                        else
+                                die 'ERROR: "--vm-disk" requires a non-empty option argument.'
+                        fi
+                        ;;
+		--ignition-file)
+                        if [ "$2" ]; then
+                                ignition_file_path=$2
+                                shift
+                        else
+                                die 'ERROR: "--ignition-file" requires a non-empty option argument.'
+                        fi
+                        ;;	
+		--ipcfg)
+                        if [ "$2" ]; then
+                                ipcfg=$2
+                                shift
+                        else
+                                die 'ERROR: "--ipcfg" requires a non-empty option argument.'
+                        fi
+                        ;;
+		--boot)
+                        boot_vm=1
+                        ;;
 		-v|--verbose)
 			verbose=$((verbose + 1))
 			;;
@@ -486,6 +540,10 @@ fi
 
 if [ ! -z ${build} ]; then
 	build_cluster
+fi
+
+if [ ! -z ${deploy_single_node} ]; then
+        deploy_node
 fi
 
 if [ ! -z ${destroy} ]; then
