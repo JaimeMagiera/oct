@@ -384,7 +384,7 @@ launch_prerun() {
 		echo "Please enter your pullSecret"
 		read pullSecret
 	else
-		pullSecret='{"auths":{"fake":{"auth": "bar"}}}'
+		pullSecret='{"auths":{"fake":{"auth":"aWQ6cGFzcwo="}}}'
 	fi
 	cp install-config.yaml.template install-config.yaml
 	echo "pullSecret: '${pullSecret}'" >> install-config.yaml
