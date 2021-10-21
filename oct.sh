@@ -95,11 +95,19 @@ while :; do
 		--install-tools)
 			install_tools=1
 			;;
+		--install-config-template)
+			if [ "$2" ]; then
+                                install_config_template_path=$2
+                                shift
+                        else
+                                die 'ERROR: "--install-config-template" requires a non-empty option argument.'
+                        fi
+                        ;;
 		--prerun)
 			prerun=1
 			;;
-		--build)
-			build=1
+		--provision-infrastructure)
+			provision_infrastructure=1
 			;;
 		--destroy)
 			destroy=1
@@ -224,7 +232,7 @@ while :; do
                                 vm_memory=$2
                                 shift
                         else
-                                die 'ERROR: "--vm-memory requires a non-empty option argument.'
+                                die 'ERROR: "--vm-memory" requires a non-empty option argument.'
                         fi
                         ;;
 		--vm-disk)
@@ -264,7 +272,7 @@ while :; do
                         else
                                 die 'ERROR: "--stream-name" requires a non-empty option argument.'
                         fi
-                        ;;	
+                        ;;
 		-v|--verbose)
 			verbose=$((verbose + 1))
 			;;
@@ -379,15 +387,19 @@ install_cluster_tools(){
 	rm bin/${client_file_name}
 }
 
-launch_prerun() {
+create_install_config_from_template() {
+        echo "Creating an install config from ${install_config_template_path}"
 	if [ -z ${auto_secret} ]; then
-		echo "Please enter your pullSecret"
-		read pullSecret
-	else
-		pullSecret='{"auths":{"fake":{"auth":"aWQ6cGFzcwo="}}}'
-	fi
-	cp install-config.yaml.template install-config.yaml
-	echo "pullSecret: '${pullSecret}'" >> install-config.yaml
+                echo "Please enter your pullSecret"
+                read pullSecret
+        else
+                pullSecret='{"auths":{"fake":{"auth":"aWQ6cGFzcwo="}}}'
+        fi
+        cp "${install_config_template_path}" install-config.yaml
+        echo "pullSecret: '${pullSecret}'" >> install-config.yaml
+}	
+
+launch_prerun() {
 	bin/openshift-install create manifests --dir=$(pwd)
 	rm -f openshift/99_openshift-cluster-api_master-machines-*.yaml openshift/99_openshift-cluster-api_worker-machineset-*.yaml
 	sed -i -e s/true/false/g manifests/cluster-scheduler-02-config.yml
@@ -403,28 +415,35 @@ launch_prerun() {
 	sudo /usr/sbin/restorecon -Rv /var/www/html
 }
 
+
+
 deploy_node() {
-	govc library.deploy --folder "${cluster_folder}" "${library}/${template_name}" "${vm_name}"
-	govc vm.change -vm "${vm_name}" \
+	podman run -e GOVC_URL="${GOVC_URL}" -e GOVC_USERNAME="${GOVC_USERNAME}" -e GOVC_PASSWORD="${GOVC_PASSWORD}" -e GOVC_INSECURE=true --rm -it docker.io/vmware/govc /govc library.deploy --folder "${cluster_folder}" "${library}/${template_name}" "${vm_name}"
+	podman run -e GOVC_URL="${GOVC_URL}" -e GOVC_USERNAME="${GOVC_USERNAME}" -e GOVC_PASSWORD="${GOVC_PASSWORD}" -e GOVC_INSECURE=true --rm -it docker.io/vmware/govc /govc vm.change -vm "${vm_name}" \
 		-c="${vm_cpu}" \
 		-m="${vm_memory}" 
-	govc vm.change -vm "${vm_name}" -e guestinfo.ignition.config.data="$(cat ${ignition_file_path} | base64 -w0)" -e guestinfo.ignition.config.data.encoding="base64"
-	govc vm.disk.change -vm "${vm_name}" -disk.label "Hard disk 1" -size ${vm_disk}G
+	podman run -e GOVC_URL="${GOVC_URL}" -e GOVC_USERNAME="${GOVC_USERNAME}" -e GOVC_PASSWORD="${GOVC_PASSWORD}" -e GOVC_INSECURE=true --rm -it docker.io/vmware/govc /govc vm.change -vm "${vm_name}" -e guestinfo.ignition.config.data="$(cat ${ignition_file_path} | base64 -w0)" -e guestinfo.ignition.config.data.encoding="base64"
+	
+	## Set the network ##
+	podman run -e GOVC_URL="${GOVC_URL}" -e GOVC_USERNAME="${GOVC_USERNAME}" -e GOVC_PASSWORD="${GOVC_PASSWORD}" -e GOVC_INSECURE=true --rm -it docker.io/vmware/govc /govc vm.network.change -vm "${vm_name}" -net "${network_name}" -net.address - ethernet-0
+	##
+
+	podman run -e GOVC_URL="${GOVC_URL}" -e GOVC_USERNAME="${GOVC_USERNAME}" -e GOVC_PASSWORD="${GOVC_PASSWORD}" -e GOVC_INSECURE=true --rm -it docker.io/vmware/govc /govc vm.disk.change -vm "${vm_name}" -disk.label "Hard disk 1" -size ${vm_disk}G
 
 	if [[ ! -z "${ipcfg}" ]]; then
-		govc vm.change -vm "${vm_name}" -e "guestinfo.afterburn.initrd.network-kargs=${ipcfg}"
+		podman run -e GOVC_URL="${GOVC_URL}" -e GOVC_USERNAME="${GOVC_USERNAME}" -e GOVC_PASSWORD="${GOVC_PASSWORD}" -e GOVC_INSECURE=true --rm -it docker.io/vmware/govc /govc vm.change -vm "${vm_name}" -e "guestinfo.afterburn.initrd.network-kargs=${ipcfg}"
 	fi
 
 	if [[ ! -z "${vm_mac}" ]]; then
-		govc vm.network.change -vm ${vm_name} -net "${cluster_network}" -net.address ${vm_mac} ethernet-0
+		podman run -e GOVC_URL="${GOVC_URL}" -e GOVC_USERNAME="${GOVC_USERNAME}" -e GOVC_PASSWORD="${GOVC_PASSWORD}" -e GOVC_INSECURE=true --rm -it docker.io/vmware/govc /govc vm.network.change -vm ${vm_name} -net "${cluster_network}" -net.address ${vm_mac} ethernet-0
 	fi
 
 	if [[ ! -z "${boot_vm}" ]]; then
-		govc vm.power -on "${vm_name}"
+		podman run -e GOVC_URL="${GOVC_URL}" -e GOVC_USERNAME="${GOVC_USERNAME}" -e GOVC_PASSWORD="${GOVC_PASSWORD}" -e GOVC_INSECURE=true --rm -it docker.io/vmware/govc /govc vm.power -on "${vm_name}"
 	fi
 }
 
-build_cluster(){
+provision_cluster_infrastructure(){
 
 	bootstrap_cpu=4
 	bootstrap_memory=16384
@@ -476,6 +495,10 @@ build_cluster(){
 		vm_name="worker-${i}.${cluster_name}"
 		deploy_node
 	done
+}	
+
+run_installer() {
+  bin/openshift-install create cluster --dir=$(pwd) --log-level=info 
 }	
 
 destroy_cluster() {
@@ -543,7 +566,7 @@ query_fcos_stream() {
 }
 
 check_oc
-check_govc
+#check_govc
 
 if [ ! -z ${install_tools} ]; then
 	install_cluster_tools	
@@ -553,12 +576,16 @@ if [ ! -z ${import_template} ]; then
         import_template_from_url
 fi
 
+if [ ! -z ${install_config_template_path} ]; then
+	create_install_config_from_template	
+fi
+
 if [ ! -z ${prerun} ]; then
 	launch_prerun
 fi
 
-if [ ! -z ${build} ]; then
-	build_cluster
+if [ ! -z ${provision_infrastructure} ]; then
+	provision_cluster_infrastructure
 fi
 
 if [ ! -z ${deploy_single_node} ]; then
