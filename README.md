@@ -59,11 +59,11 @@ Being a community project, OKD benefits greatly from from repeated testing of in
   
 ### --master-node-count *number*
 
-  The desired number of master nodes. This flag should be used in conjunction with --worker-node-count, --build, --destroy, and --cluster-power.
+  The desired number of master nodes. This flag should be used in conjunction with --worker-node-count, --provision_cluster_infrastructure, --destroy, and --cluster-power.
 
 ### --worker-node-count *number* 
 
-  The desired number of worker nodes. This flag should be used in conjunction with --master-node-count, --build, --destroy, and --cluster-power. 
+  The desired number of worker nodes. This flag should be used in conjunction with --master-node-count, --provision_cluster_infrastructure, --destroy, and --cluster-power. 
 
 ### --cluster-folder *folder*
 
@@ -105,7 +105,7 @@ Note: The openshift-installer injests and deletes the install configuration file
 
 This function calls the govc binary to duplicate a VM template and set desired cpu, memory, and storage values. It can optionally add Afterburn kernel arguments such as static IP configuration and set the mac address of the VM. The function uses the presence of the --boot flag to determine if the completed node should be booted or not after being configured. 
 
-### build_cluster()
+### provision_cluster_infrastructure()
 
 This function makes calls to deploy_node() to deploy a bootstrap node, then iteratively deploy master and worker nodes– all with the appropriate ignition configuration file. 
 
