@@ -24,9 +24,9 @@ Calls the install_cluster_tools() function. This flag should be used in conjunct
 
 Call the launch_prerun() function.
 
---build
+--provision-infrastructure
 
-Calls the build_cluster() function. This flag should be accompanied by the --template-name, --library, --cluster-name, --cluster-folder, --network-name, --installation-folder, --master-node-count, and --worker-node-count flags with their appropriate values.
+Calls the provision_cluster_infrastructure() function. This flag should be accompanied by the --template-name, --library, --cluster-name, --cluster-folder, --network-name, --installation-folder, --master-node-count, and --worker-node-count flags with their appropriate values.
 
 --destroy
 
