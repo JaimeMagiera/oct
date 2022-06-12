@@ -56,7 +56,7 @@ network_name="VM Network"
 install_folder=`pwd`
 
 # Import the template
-./oct.sh --import-template --library "${library}" --template-url "${template_url}"
+oct.sh --import-template --library "${library}" --template-url "${template_url}"
 
 # Install the desired OKD tools
 oct.sh --install-tools --release 4.6
