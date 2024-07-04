@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version="0.2.1"
+version="0.2.2"
 
 die() {
 	echo "${1}"
@@ -130,7 +130,7 @@ function query_releases() {
   	response_code=$(echo "${response}" | awk -F '#RESPONSE_CODE' '{ print $2 }')
 
   	if [ "${response_code}" -eq "200" ]; then
-		accepted_text=$(echo "${html_component}" | grep "Accepted" -B 2 | awk -F "release/" '{print $2}' | awk -F "\"" '{print $1}' | xargs)
+		accepted_text=$(echo "${html_component}" | grep "Accepted" -B 1 | awk 'sub(/.*release\/ */,""){f=1} f{if ( sub(/ *".*/,"") ) f=0; print}')
 	  	accepted_array=($accepted_text)
 	  	if [ ${#accepted_array[@]} -eq 0 ]; then
 			echo "No accepted releases for ${release_name} available."
