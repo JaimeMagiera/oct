@@ -91,7 +91,8 @@ function query_builds() {
 	  selected_release="${accepted_array[${selected_release}]}"
 	  echo "${selected_release}"
 	  if [[ -v auto_download ]]; then
-		oc adm release extract --tools registry.ci.openshift.org/origin/release-scos:"${selected_release}"
+			echo "Downloading and extracting the tools..."
+		  	oc adm release extract --tools registry.ci.openshift.org/origin/release-scos:"${selected_release}"
 	  fi 
   else
           die "Could not retrieve html.\nError: ${response_code}" 10
