@@ -8,7 +8,7 @@ die() {
 }
 
 show_help() {
-	echo -e "\nQuery Build v${version}\n"
+	echo -e "\nOKD Query Builds v${version}\n"
 	echo -e "Parameters\n"
 	echo -e "  --version: The OKD minor version to query\n"
 	echo -e "  --auto: Optional flag to automatically download the respective tools for the selected build.\n"
@@ -17,7 +17,7 @@ show_help() {
 	echo -e "  --help: Output this help text.\n"
 	echo -e "Examples\n"
 	echo -e "  Query builds for OKD 4.17:"
-	echo -e "  ./query-build.sh --version 4.17\n"
+	echo -e "  ./okd-query-builds.sh --version 4.17\n"
 }
 
 while :; do
