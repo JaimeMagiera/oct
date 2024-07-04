@@ -17,10 +17,12 @@ show_help() {
 	echo -e "  --debug: Output debugging information.\n"
 	echo -e "  --help: Output this help text.\n"
 	echo -e "Examples\n"
+	echo -e "  Query releases for OKD 4.17 and 4.16:"
+        echo -e "  okd-query-releases.sh\n"
 	echo -e "  Query releases for OKD 4.17:"
-	echo -e "  ./okd-query-releases.sh --version 4.17\n"
+	echo -e "  okd-query-releases.sh --version 4.17\n"
 	echo -e "  Query releases for OKD 4.17 and select which version to extract the tools for:"
-        echo -e "  ./okd-query-releases.sh --version 4.17 --select\n"
+        echo -e "  okd-query-releases.sh --version 4.17 --select\n"
 }
 
 while :; do
