@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version="0.2.0"
+version="0.2.1"
 
 die() {
 	echo "${1}"
@@ -79,6 +79,9 @@ done
 
 
 function list_releases() {
+	if [ ! -z "${debug}" ]; then
+                echo "list_releases()"
+        fi
 	releases=("$@")
 	for release in "${releases[@]}"; do
         	echo "${release}"
@@ -86,7 +89,9 @@ function list_releases() {
 }	
 
 function select_release() {
-
+	if [ ! -z "${debug}" ]; then
+                echo "select_release()"
+        fi
 	releases=("$@")
 	index=0
         echo "Available Releases:"
@@ -101,8 +106,11 @@ function select_release() {
 }	
 
 function extract_tools() {
+	if [ ! -z "${debug}" ]; then
+                echo "extract_tools()"
+        fi
 	echo "Downloading and extracting the tools..."
-	if [[ -v filter ]]; then
+	if [ ! -z "${filter}" ]; then
         	oc adm release extract --tools registry.ci.openshift.org/origin/release-scos:"${1}" --filter-by-os="${filter}" --command-os "${filter}"
 	else
 		oc adm release extract --tools registry.ci.openshift.org/origin/release-scos:"${1}"
@@ -112,7 +120,7 @@ function extract_tools() {
 
 function query_releases() {
 	version="${1}"
-  	if [ -v debug ]; then
+  	if [ ! -z "${debug}" ]; then
 		echo "query_releases()"
   	fi
   	release_name="${version}.0-0.okd-scos"
@@ -128,7 +136,7 @@ function query_releases() {
 			echo "No accepted releases for ${release_name} available."
 	        	exit 0	
 	  	fi 				  
-		if [[ -v select_release ]]; then	
+		if [ ! -z "${select_release}" ]; then	
 		  	select_release "${accepted_array[@]}"
 		else
 			list_releases "${accepted_array[@]}"
@@ -139,7 +147,7 @@ function query_releases() {
 }
 
 function decision_tree() {
-	if [[ -v selected_version ]]; then
+	if [ ! -z "${selected_version}" ]; then
 		query_releases "${selected_version}"
 	else
 		query_releases "4.17"
