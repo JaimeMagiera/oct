@@ -11,7 +11,7 @@ show_help() {
 	echo -e "\nOKD Query Releases v${version}\n"
 	echo -e "Parameters\n"
 	echo -e "  --version: The OKD minor version to query\n"
-	echo -e "  --select: Used in conjunction with select, allows you to select a particular accepted release and extract the respective tools.\n"
+	echo -e "  --select: Used in conjunction with the version flag, allows you to select a particular accepted release and extract the respective tools.\n"
 	echo -e "  --auto: Optional flag to automatically download the respective tools for the latest available accepted release.\n"
 	echo -e "  --test: Go through the motions, but don't actually make changes.\n"
 	echo -e "  --debug: Output debugging information.\n"
