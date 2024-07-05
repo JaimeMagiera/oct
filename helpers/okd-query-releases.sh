@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version="0.2.2"
+version="0.3.0"
 
 die() {
 	echo "${1}"
@@ -13,7 +13,7 @@ show_help() {
 	echo -e "  --version: The OKD minor version to query\n"
 	echo -e "  --select: Used in conjunction with the version flag, allows you to select a particular accepted release and extract the respective tools.\n"
 	echo -e "  --auto: Optional flag to automatically download the respective tools for the latest available accepted release.\n"
-	echo -e "  --test: Go through the motions, but don't actually make changes.\n"
+	echo -e "  --test: Go through the motions, but don't actually extract the materials.\n"
 	echo -e "  --debug: Output debugging information.\n"
 	echo -e "  --help: Output this help text.\n"
 	echo -e "Examples\n"
@@ -23,6 +23,8 @@ show_help() {
 	echo -e "  okd-query-releases.sh --version 4.17\n"
 	echo -e "  Query accepted releases for OKD 4.17 and select which version to extract the tools for:"
         echo -e "  okd-query-releases.sh --version 4.17 --select\n"
+	echo -e "  Query accepted releases for OKD 4.17 and automatically select the most recent version to extract the tools for:"
+	echo -e "  okd-query-releases.sh --version 4.17 --auto\n"
 }
 
 while :; do
@@ -39,19 +41,11 @@ while :; do
                                 die 'ERROR: "--version" requires a non-empty option argument.' 1
                         fi
                         ;;
-		--filter)
-                        if [ "$2" ]; then
-				filter=$2
-                                shift
-                        else
-                                die 'ERROR: "--filter" requires a non-empty option argument.' 1
-                        fi
-                        ;;
                 --select)
                         select_release=1
                         ;;			
 		--auto)
-		        auto_download=1
+		        auto_select_release=1
 			;;
 	        --test)
                         test_run=1
@@ -102,7 +96,12 @@ function select_release() {
         read -p "Please enter your selection: " selection
         selected_release="${releases[${selection}]}"
         echo "${selected_release}"
-        extract_tools "${selected_release}"
+	if [ -z ${test_run} ]; then
+        	extract_tools "${selected_release}"
+        else
+                echo "Test complete."
+                exit 0
+        fi
 }	
 
 function extract_tools() {
@@ -110,11 +109,7 @@ function extract_tools() {
                 echo "extract_tools()"
         fi
 	echo "Downloading and extracting the tools..."
-	if [ ! -z "${filter}" ]; then
-        	oc adm release extract --tools registry.ci.openshift.org/origin/release-scos:"${1}" --filter-by-os="${filter}" --command-os "${filter}"
-	else
-		oc adm release extract --tools registry.ci.openshift.org/origin/release-scos:"${1}"
-	fi 	
+	oc adm release extract --tools registry.ci.openshift.org/origin/release-scos:"${1}"
 	echo "Done."
 }	
 
@@ -135,11 +130,23 @@ function query_releases() {
 	  	if [ ${#accepted_array[@]} -eq 0 ]; then
 			echo "No accepted releases for ${release_name} available."
 	        	exit 0	
-	  	fi 				  
-		if [ ! -z "${select_release}" ]; then	
-		  	select_release "${accepted_array[@]}"
-		else
-			list_releases "${accepted_array[@]}"
+	  	fi
+
+		if [ ! -z "${auto_select_release}" ]; then
+			selected_release="${accepted_array[0]}"
+			echo "Auto selecting ${selected_release} for download and extraction..."
+			if [ -z ${test_run} ]; then
+				extract_tools "${selected_release}"
+			else
+				echo "Test complete."
+				exit 0
+			fi	
+		else	
+			if [ ! -z "${select_release}" ]; then	
+		  		select_release "${accepted_array[@]}"
+			else
+				list_releases "${accepted_array[@]}"
+			fi	
 		fi	
   else
           die "Could not retrieve html.\nError: ${response_code}" 10
