@@ -1,11 +1,16 @@
 #!/bin/bash
 
-version="0.3.0"
+version="0.3.1"
 
 die() {
 	echo "${1}"
 	exit "${2}"
 }
+
+show_version() {
+	echo -e "OKD Query Releases v${version}"
+	exit 0
+}	
 
 show_help() {
 	echo -e "\nOKD Query Releases v${version}\n"
@@ -34,12 +39,7 @@ while :; do
 			exit
 			;;
                 --version)
-                        if [ "$2" ]; then
-                                selected_version=$2
-                                shift
-                        else
-                                die 'ERROR: "--version" requires a non-empty option argument.' 1
-                        fi
+			show_version
                         ;;
                 --select)
                         select_release=1
