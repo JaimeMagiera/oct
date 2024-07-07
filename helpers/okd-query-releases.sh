@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version="0.3.1"
+version="0.3.2"
 
 die() {
 	echo "${1}"
@@ -15,11 +15,12 @@ show_version() {
 show_help() {
 	echo -e "\nOKD Query Releases v${version}\n"
 	echo -e "Parameters\n"
-	echo -e "  --version: The OKD minor version to query\n"
+	echo -e "  --minor-version: The OKD minor version to query\n"
 	echo -e "  --select: Used in conjunction with the version flag, allows you to select a particular accepted release and extract the respective tools.\n"
 	echo -e "  --auto: Optional flag to automatically download the respective tools for the latest available accepted release.\n"
 	echo -e "  --test: Go through the motions, but don't actually extract the materials.\n"
 	echo -e "  --debug: Output debugging information.\n"
+	echo -e "  --version: Output the version of this script.\n"
 	echo -e "  --help: Output this help text.\n"
 	echo -e "Examples\n"
 	echo -e "  Query accepted releases for OKD 4.17 and 4.16:"
@@ -38,9 +39,17 @@ while :; do
 			show_help
 			exit
 			;;
-                --version)
-			show_version
-                        ;;
+		--version)
+                        show_version
+                        ;;	
+		--minor-version)
+                        if [ "$2" ]; then
+                                selected_version=$2
+                                shift
+                        else
+                                die 'ERROR: "--minor-version" requires a non-empty option argument.' 1
+                        fi
+                        ;;	
                 --select)
                         select_release=1
                         ;;			
