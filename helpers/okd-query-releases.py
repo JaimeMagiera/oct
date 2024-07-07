@@ -4,14 +4,14 @@ import click
 import subprocess
 
 @click.command()
-@click.option('--version', default='', help='The OKD minor version to query') 
+@click.option('--minor-version', default='', help='The OKD minor version to query') 
 @click.option('--select/--no-select', default=False, help='Used in conjunction with the version flag, allows you to select a particular accepted release and extract the respective tools.')
 @click.option('--auto/--no-auto', default=False, help='Optional flag to automatically download the respective tools for the latest available accepted release')
 @click.option('--debug/--no-debug', default=False, help='Enable debug')
 @click.option('--test/--no-test', default=False, help='Go through the motions, but not actually extract the materials.')
-def decision_tree(version, select, auto, debug, test):
-    if version:
-        query_releases(version, select, auto, debug, test)
+def decision_tree(minor_version, select, auto, debug, test):
+    if minor_version:
+        query_releases(minor_version, select, auto, debug, test)
     else:
         query_releases("4.17", select, auto, debug, test)
         query_releases("4.16", select, auto, debug, test)
@@ -43,8 +43,8 @@ def extract_tools(selected_release):
     stdout, stderr = oc_cmd.communicate()
     print("Done.")
 
-def query_releases(version, select, auto, debug, test):
-    release_name = f"{version}.0-0.okd-scos"
+def query_releases(minor_version, select, auto, debug, test):
+    release_name = f"{minor_version}.0-0.okd-scos"
     query_url = f"https://amd64.origin.releases.ci.openshift.org/releasestream/{release_name}"
     response = requests.get(query_url)
     if response.status_code == 200:
