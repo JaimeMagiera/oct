@@ -434,11 +434,11 @@ launch_prerun() {
 
 deploy_node() {
 
-	IGNITION_CONFIG="/usr/local/share/images/bootstrap.ign"
+	IGNITION_CONFIG="/usr/local/share/images/${NODE_TYPE}.ign"
 	IGNITION_DEVICE_ARG=(--qemu-commandline="-fw_cfg name=opt/com.coreos/config,file=${IGNITION_CONFIG}")
 	virt-install --connect="qemu:///system" --name="${VM_NAME}" --vcpus="${VM_CPUS}" --memory="${VM_MEMORY}" \
         --os-variant="fedora-coreos-${IMAGE_STREAM}" --import --graphics=none \
-        --disk="size=${VM_DISK},backing_store=${IMAGE}" \
+        --disk="size=${VM_DISK},pool=openshift-production,backing_store=${IMAGE}" \
         --network network="${BASE_DOMAIN}" "${IGNITION_DEVICE_ARG[@]}" --noreboot
 }
 
@@ -456,6 +456,7 @@ provision_cluster_infrastructure(){
 	VM_CPUS="${BOOTSTRAP_VCPUS}"
 	VM_MEMORY="${BOOTSTRAP_MEMORY}"
 	VM_DISK="${BOOTSTRAP_DISK}"
+	NODE_TYPE="bootstrap"
 	echo "Creating a bootstrap node with ${VM_CPUS} cpus and ${VM_MEMORY} MB of memory"
 	IP_ADDRESS="${CLUSTER_BASE_NETWORK}.9"
 	if [ -z ${test_mode} ]; then
@@ -471,6 +472,7 @@ provision_cluster_infrastructure(){
 	VM_CPUS="${CONTROL_PLANE_VCPUS}"
 	VM_MEMORY="${CONTROL_PLANE_RAM}"
 	VM_DISK="${CONTROL_PLANE_DISK}"
+	NODE_TYPE="master"
 	echo "Creating ${CONTROL_PLANE_NODE_COUNT} control plane nodes with ${VM_CPUS} cpus and ${VM_MEMORY} MB of memory"
 
 	for (( i=0; i<${CONTROL_PLANE_NODE_COUNT}; i++ )); do
@@ -480,10 +482,10 @@ provision_cluster_infrastructure(){
 		VM_NAME="control-plane-${i}.${BASE_DOMAIN}"
 		if [ -z ${test_mode} ]; then
                 	deploy_node
-                	MAC_ADDRESS=$(virsh dumpxml "${VM_NAME}" | grep "<mac address=" | awk -F\' '{print $2}' | awk -F: -v OFS=: 'NF=6')
-        	else
-                	MAC_ADDRESS="00:00:00:00:00"
-        	fi 
+              		MAC_ADDRESS=$(virsh dumpxml "${VM_NAME}" | grep "<mac address=" | awk -F\' '{print $2}' | awk -F: -v OFS=: 'NF=6')
+     		else
+            		MAC_ADDRESS="00:00:00:00:00"
+    	        fi 
 		echo "<host mac='${MAC_ADDRESS}' ip='${IP_ADDRESS}'/>" >> "${dhcp_config}"
 	        echo -en "<host ip='${IP_ADDRESS}'>\n  <hostname>${VM_NAME}</hostname>\n</host>\n" >> "${dns_config}"
 	done
@@ -492,6 +494,7 @@ provision_cluster_infrastructure(){
         VM_CPUS="${WORKER_VCPUS}"	
         VM_MEMORY="${WORKER_MEMORY}"
 	VM_DISK="${WORKER_DISK}"
+	NODE_TYPE="worker"
 	echo "Creating ${WORKER_NODE_COUNT} worker nodes with ${VM_CPUS} cpus and ${VM_MEMORY} MB of memory"
 
 	for (( i=0; i<${WORKER_NODE_COUNT}; i++ )); do

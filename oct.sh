@@ -365,7 +365,7 @@ import_template_from_url(){
 install_cluster_tools(){
 
 	if [[ -v release ]]; then
-		release_info=$(oc adm release info registry.ci.openshift.org/origin/release:"${release}")
+		release_info=$(oc adm release info registry.ci.openshift.org/origin/release-scos:"${release}")
 		release_version=$(echo "${release_info}" | grep Name | awk '{print $2}')
 		pull_url=$(echo "${release_info}" | grep "Pull From:" | awk '{print $3}')	
 	else      
