@@ -1,5 +1,5 @@
 # oct
-OCT is a command line tool to simplify the process of building and destroying OKD/Openshift clusters in vSphere. It utilizes the govc command line tool to communicate with vSphere. 
+OCT is a suite of tools to simplify the process of building and destroying OKD/Openshift clusters in vSphere. It utilizes the govc command line tool to communicate with vSphere. 
 
 Being a community project, OKD benefits greatly from from repeated testing of installation and functionality. In an effort to simplify the process of conducting repeated OKD installs on vSphere UPI, I developed this script to handle each step of the installation process— from downloading the installer to cleaning up after the installer complete. The script is modular in the sense that each task is a separate function in the script. This allows youk to arrange tasks in different combinations by calling them in a wrapper script. For an example, see the page [Implementing an Automated Testing Solution for OKD Installs on vSphere with User Provisioned Infrastructure (UPI)](https://github.com/JaimeMagiera/oct/blob/master/automated-installations.md).
 
