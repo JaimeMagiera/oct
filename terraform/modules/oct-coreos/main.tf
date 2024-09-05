@@ -2,11 +2,11 @@ terraform {
   required_providers {
     ct = {
       source  = "poseidon/ct"
-      version = "0.7.1"
+      version = "0.13.0"
     }
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 3.0"
+      version = "~> 5.66.0"
     }
   }
 }
