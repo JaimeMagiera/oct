@@ -1,6 +1,6 @@
 #!/bin/bash
 
-version="0.3.2"
+version="0.4.0"
 
 die() {
 	echo "${1}"
@@ -138,7 +138,7 @@ function query_releases() {
 	  	accepted_array=($accepted_text)
 	  	if [ ${#accepted_array[@]} -eq 0 ]; then
 			echo "No accepted releases for ${release_name} available."
-	        	exit 0	
+	        	return	
 	  	fi
 
 		if [ ! -z "${auto_select_release}" ]; then
@@ -166,6 +166,7 @@ function decision_tree() {
 	if [ ! -z "${selected_version}" ]; then
 		query_releases "${selected_version}"
 	else
+		query_releases "4.18"
 		query_releases "4.17"
 		query_releases "4.16"
 	fi			
